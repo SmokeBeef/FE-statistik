@@ -71,12 +71,16 @@ export default function Player() {
     getAll();
   }, []);
 
+  const today = new Date();
+  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
+  const formattedDate = today.toLocaleDateString('en-GB', options).replace(/\//g, '-');
+
   const tableRef = useRef(null);
 
   const {onDownload} = useDownloadExcel({
     currentTableRef: tableRef.current,
-    filename:`Play-${Date.now()}`,
-    sheet:`Play-${Date.now()}`
+    filename:`Play-${formattedDate}.xlsx`,
+    sheet:`Play-${formattedDate}.xlsx`
   })
 
   return (

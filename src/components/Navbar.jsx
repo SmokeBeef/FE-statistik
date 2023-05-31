@@ -47,6 +47,14 @@ export default function Navbar() {
       >
         Detail
       </a>
+      <a
+        href="/test"
+        className={`text-lg text-white py-5 text-center hover:text-2xl hover:text-gray-800 transition-all ${
+          window.location.pathname === "/test" ? "text-2xl text-gray-800 " : ""
+        }`}
+      >
+        Test
+      </a>
     </div>
   </div>
 </div>
