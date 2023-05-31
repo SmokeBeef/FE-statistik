@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "../utils/axios";
+import {MdSwapVert} from "react-icons/md"
 
 export default function Dasboard() {
   const [countdown, setCountdown] = useState(0);
@@ -61,7 +62,7 @@ export default function Dasboard() {
 
   const onSubmitMatch = async () => {
     const res = await axios.post("match/add", {
-      
+
     })
   };
   // ------
@@ -155,36 +156,39 @@ export default function Dasboard() {
             </select>
           </div>
         </form>
-
-        <div className="flex justify-center mt-10 countdown">
-          <div className="py-5 w-72 text-slate-50 text-center bg-blue-900 rounded-xl">
-            <h1 className="text-lg">Time</h1>
-            <h2 className="text-2xl my-5">
-              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-            </h2>
-            {!isRunning && (
+        <div className="flex w-full justify-evenly items-center">
+          <div className="">Skor</div>
+          <div className="flex justify-center mt-10 countdown">
+            <div className="py-5 w-72 text-slate-50 text-center bg-blue-900 rounded-xl">
+              <h1 className="text-lg">Time</h1>
+              <h2 className="text-2xl my-5">
+                {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+              </h2>
+              {!isRunning && (
+                <button
+                  className="bg-green-600 p-2 w-20 hover:bg-green-700 transition-colors rounded-lg text-slate-50"
+                  onClick={handleStart}
+                >
+                  Start
+                </button>
+              )}
+              {isRunning && (
+                <button
+                  className="bg-yellow-600 hover:bg-yellow-700 p-2 w-20 rounded-lg"
+                  onClick={handlePause}
+                >
+                  Pause
+                </button>
+              )}
               <button
-                className="bg-green-600 p-2 w-20 hover:bg-green-700 transition-colors rounded-lg text-slate-50"
-                onClick={handleStart}
+                className="ml-10 p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600"
+                onClick={handleReset}
               >
-                Start
+                Reset
               </button>
-            )}
-            {isRunning && (
-              <button
-                className="bg-yellow-600 hover:bg-yellow-700 p-2 w-20 rounded-lg"
-                onClick={handlePause}
-              >
-                Pause
-              </button>
-            )}
-            <button
-              className="ml-10 p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600"
-              onClick={handleReset}
-            >
-              Reset
-            </button>
+            </div>
           </div>
+          <div className="">Skor</div>
         </div>
         <div className="flex justify-around">
           <div className="team">
@@ -199,11 +203,16 @@ export default function Dasboard() {
                 <h3 className="w-[4.5rem] -z-[1] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
                   {data.position}
                 </h3>
-                <div className="">
+                <div className="ml-5">
                   <button className="w-10 h-14 bg-yellow-300 rounded"></button>
                 </div>
                 <div className="ml-5">
                   <button className="w-10 h-14 bg-red-600 rounded"></button>
+                </div>
+                <div className="flex items-center justify-center ml-5 ">
+                  <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                  <MdSwapVert />
+                  </button>
                 </div>
               </div>
             ))}

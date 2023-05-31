@@ -8,6 +8,7 @@ export default function Team() {
   const [modalOpen, setModalOpen] = useState(false);
   const [team, setTeam] = useState([]);
   const [nama, setNama] = useState("");
+  const [logo, setLogo] = useState();
 
   const getAll = async () => {
     const res = await axios.get("/team/");
@@ -15,10 +16,9 @@ export default function Team() {
   };
 
   const onSubmit = async (e) => {
-    console.log(nama);
-    const data = {
-      name: nama,
-    };
+
+    const data = new FormData()
+
     console.log(data);
     e.preventDefault();
     await axios.post("team/add", data, {}).then((res) => {
@@ -109,6 +109,27 @@ export default function Team() {
                 required
                 value={nama}
                 onChange={(e) => setNama(e.target.value)}
+              />
+            </div>
+            <div className="mb-6">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="file"
+              >
+                Logo Team
+              </label>
+              <input
+                type="file"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="file"
+                required
+                accept="image/png, image/jpg, image/jpeg"
+                value={logo}
+                onChange={(e) => {
+                  setLogo(e.target.files[0])
+                  console.log(e.target.files);
+                  console.log(e.target.files[0]);
+                }}
               />
             </div>
             <button
