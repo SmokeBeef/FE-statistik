@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import axios from "../utils/axios";
 import swal from "sweetalert";
+import Background from "../components/background";
 
 export default function Team() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -51,6 +52,7 @@ export default function Team() {
   return (
     <div>
       <Navbar />
+      <Background/>
       <main className="font-Poppins mt-5 w-screen">
         <button
           onClick={() => setModalOpen(true)}
@@ -58,17 +60,15 @@ export default function Team() {
         >
           Tambah Team
         </button>
-        <div className="flex justify-center">
+        <div className="flex justify-center ">
           <table className="bg-slate-200 mt-5 border border-slate-400 w-[90%]">
             <thead className="">
               <th className="p-2 border border-slate-400">No</th>
               <th className="p-2 border border-slate-400">Team</th>
-              <th className="p-2 border border-slate-400">Nomor Jersey</th>
-              <th className="p-2 border border-slate-400">Nama</th>
-              <th className="p-2 border border-slate-400">Nomor Jersey</th>
+              <th className="p-2 border border-slate-400">Player Data</th>
               <th className="p-2 border border-slate-400">Action</th>
             </thead>
-            <tbody className="">
+            <tbody className="text-center">
               {team.map((data, index) => (
                 <tr>
                   <td className="p-2 border border-slate-300 ">{index + 1}</td>
@@ -77,7 +77,9 @@ export default function Team() {
                     <ul>
                       {data.player.map((data, index) => (
                         <li>
-                          {data.numberJersey} || {data.name} || {data.position}
+                          Jersey No : {data.numberJersey} <br />
+                          Nama : {data.name} <br />
+                          Posisi : {data.position}
                         </li>
                       ))}
                     </ul>

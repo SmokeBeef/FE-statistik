@@ -104,13 +104,14 @@ export default function Dasboard() {
   return (
     <div className="font-Poppins">
       <Navbar />
-      <main className="mt-4 w-full h-full px-6 z-10">
+      <Background/>
+      <main className="mt-4 w-full h-full px-6 z-1 main-content">
         <div className="flex justify-between items-center h-1/2">
           <div className="w-1/3">
             <div className="flex flex-rows justify-center ">
               <label
                 htmlFor="homeTeam"
-                className="block text-gray-700 text-2xl mr-3 font-bold"
+                className="block text-white text-2xl mr-3 font-bold"
               >
                 Home Team
               </label>
@@ -130,7 +131,7 @@ export default function Dasboard() {
               </select>
             </div>
             <div className="flex justify-center">
-              <h3 className="text-3xl font-bold pt-10">0</h3>
+              <h3 className="text-6xl text-white font-bold pt-10">0</h3>
             </div>
           </div>
           <div className="w-1/3 flex flex-col items-center bg-slate-200">
@@ -174,7 +175,7 @@ export default function Dasboard() {
             <div className="flex flex-rows justify-center ">
               <label
                 htmlFor="awayTeam"
-                className="block text-gray-700 text-2xl mr-3 font-bold"
+                className="block text-white text-2xl mr-3 font-bold"
               >
                 Away Team
               </label>
@@ -194,12 +195,12 @@ export default function Dasboard() {
               </select>
             </div>
             <div className="flex justify-center">
-              <h3 className="text-3xl font-bold pt-10">0</h3>
+              <h3 className="text-6xl text-white font-bold pt-10">0</h3>
             </div>
           </div>
         </div>
         <div className="flex justify-between">
-          <div className="team w-1/3 mt-10">
+          <div className="team w-1/3 mt-10 ">
             {playerHome.map((data) => (
               <div key={data.numberJersey} className="flex">
                 <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
@@ -219,7 +220,7 @@ export default function Dasboard() {
                 </div>
                 <div className="flex items-center justify-center ml-5">
                   <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
-                    <MdSwapVert />
+                    <MdSwapVert className="text-white"/>
                   </button>
                 </div>
               </div>
@@ -230,7 +231,7 @@ export default function Dasboard() {
               <div key={data.numberJersey} className="flex">
                 <div className="flex items-center justify-center mr-5">
                   <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
-                    <MdSwapVert />
+                    <MdSwapVert className="text-white"/>
                   </button>
                 </div>
                 <div className="mr-5">

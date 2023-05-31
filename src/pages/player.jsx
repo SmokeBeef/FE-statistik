@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Navbar from "../components/Navbar";
 import Modal from "../components/Modal";
 import axios from "../utils/axios";
 import swal from "sweetalert";
+import Background from "../components/background";
+import { useDownloadExcel } from "react-export-table-to-excel";
 
 export default function Player() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -69,9 +71,18 @@ export default function Player() {
     getAll();
   }, []);
 
+  const tableRef = useRef(null);
+
+  const {onDownload} = useDownloadExcel({
+    currentTableRef: tableRef.current,
+    filename:`Play-${Date.now()}`,
+    sheet:`Play-${Date.now()}`
+  })
+
   return (
     <div className="">
       <Navbar />
+      <Background/>
       <main className="font-Poppins mt-5">
         <button
           onClick={handleAdd}
@@ -79,17 +90,19 @@ export default function Player() {
         >
           Tambah Player
         </button>
+        <button className="bg-green-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-green-800 transition-colors" onClick={onDownload}>Export to Excel</button>
+        <button className="bg-red-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-red-800 transition-colors">Export to PDF</button>
         <div className="flex justify-center">
-          <table className="bg-slate-200 mt-5 border border-slate-400">
+          <table className="bg-slate-200 mt-5 border border-slate-400 w-[90%]" ref={tableRef}>  
             <thead className="">
-              <th className="p-2 border border-slate-400">No</th>
-              <th className="p-2 border border-slate-400">Nama</th>
-              <th className="p-2 border border-slate-400">Nomor Jersey</th>
-              <th className="p-2 border border-slate-400">Posisi</th>
-              <th className="p-2 border border-slate-400">Team</th>
-              <th className="p-2 border border-slate-400">Action</th>
+              <th className="p-2 border border-slate-300">No</th>
+              <th className="p-2 border border-slate-300">Nama</th>
+              <th className="p-2 border border-slate-300">Nomor Jersey</th>
+              <th className="p-2 border border-slate-300">Posisi</th>
+              <th className="p-2 border border-slate-300">Team</th>
+              <th className="p-2 border border-slate-300">Action</th>
             </thead>
-            <tbody className="">
+            <tbody className="text-center">
               {player.map((data, index) => (
                 <tr>
                   <td className="p-2 border border-slate-300">{index + 1}</td>
