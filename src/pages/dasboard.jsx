@@ -105,19 +105,19 @@ export default function Dasboard() {
   return (
     <div className="font-Poppins">
       <Navbar />
-      <main className="">
-        <form action="" className="flex  justify-around items-center">
-          <div className="">
+      <main className="mt-4 w-full">
+        <form action="" className="flex justify-around items-center">
+          <div className="flex justify-center w-1/3">
             <label
               htmlFor="homeTeam"
-              className="block text-gray-700 text-sm font-bold mb-2"
+              className="block text-gray-700 text-3xl mr-3 font-bold"
             >
               Team
             </label>
             <select
               id="homeTeam"
               name=""
-              className="shadow appearance-none border rounded w-40 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              className="shadow appearance-none border rounded w-40 py-2 px-3 text-base text-center text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
               value={homeTeam}
               onChange={(e) => onChangeHandleHome(e, e.target.value)}
             >
@@ -127,6 +127,7 @@ export default function Dasboard() {
               ))}
             </select>
           </div>
+<<<<<<< HEAD
           <div className="">
             <button
               type="submit"
@@ -180,16 +181,70 @@ export default function Dasboard() {
                   Pause
                 </button>
               )}
+=======
+          <div className="flex justify-center mt-10 countdown w-1/3">
+          <div className="py-5 w-72 text-slate-50 text-center bg-blue-900 rounded-xl">
+            <h1 className="text-lg">Time</h1>
+            <h2 className="text-2xl my-5">
+              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+            </h2>
+            {!isRunning && (
+>>>>>>> b9a7ab99ceada2411812563562170c36c5c15a8d
               <button
                 className="ml-10 p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600"
                 onClick={handleReset}
               >
                 Reset
               </button>
+<<<<<<< HEAD
             </div>
+=======
+            )}
+            {isRunning && (
+              <button
+                className="bg-yellow-600 hover:bg-yellow-700 p-2 w-20 rounded-lg"
+                onClick={handlePause}
+              >
+                Pause
+              </button>
+            )}
+            <button
+              type="submit"
+              className=" bg-blue-600 hover:bg-blue-700 transition-colors text-slate-100 py-2 px-3 rounded-lg mx-3"
+            >
+              Submit
+            </button>
+            <button
+              className=" p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600"
+              onClick={handleReset}
+            >
+              Reset
+            </button>
+>>>>>>> b9a7ab99ceada2411812563562170c36c5c15a8d
           </div>
           <div className="">Skor</div>
         </div>
+          <div className="flex justify-center w-1/3">
+            <label
+              htmlFor="homeTeam"
+              className="block text-gray-700 text-3xl mr-3 font-bold"
+            >
+              Team
+            </label>
+            <select
+              id="homeTeam"
+              name=""
+              className="shadow appearance-none border rounded w-40 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+              value={awayTeam}
+              onChange={(e) => onChangeHandleAway(e, e.target.value)}
+            >
+              <option value="">---Pilih Team---</option>
+              {team.map((data) => (
+                <option value={data.id}>{data.name}</option>
+              ))}
+            </select>
+          </div>
+        </form>
         <div className="flex justify-around">
           <div className="team">
             {playerHome.map((data) => (
