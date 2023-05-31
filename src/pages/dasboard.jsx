@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "../utils/axios";
-import {MdSwapVert} from "react-icons/md"
+import { MdSwapVert } from "react-icons/md";
+import Background from "../components/background";
 
 export default function Dasboard() {
   const [countdown, setCountdown] = useState(0);
@@ -61,9 +62,7 @@ export default function Dasboard() {
   // Button
 
   const onSubmitMatch = async () => {
-    const res = await axios.post("match/add", {
-
-    })
+    const res = await axios.post("match/add", {});
   };
   // ------
 
@@ -105,150 +104,104 @@ export default function Dasboard() {
   return (
     <div className="font-Poppins">
       <Navbar />
-      <main className="mt-4 w-full">
-        <form action="" className="flex justify-around items-center">
-          <div className="flex justify-center w-1/3">
-            <label
-              htmlFor="homeTeam"
-              className="block text-gray-700 text-3xl mr-3 font-bold"
-            >
-              Team
-            </label>
-            <select
-              id="homeTeam"
-              name=""
-              className="shadow appearance-none border rounded w-40 py-2 px-3 text-base text-center text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={homeTeam}
-              onChange={(e) => onChangeHandleHome(e, e.target.value)}
-            >
-              <option value="">---Pilih Team---</option>
-              {team.map((data) => (
-                <option value={data.id}>{data.name}</option>
-              ))}
-            </select>
-          </div>
-<<<<<<< HEAD
-          <div className="">
-            <button
-              type="submit"
-              className="bg-blue-600 hover:bg-blue-700 transition-colors text-slate-100 py-2 px-3 rounded-lg"
-            >
-              Submit
-            </button>
-          </div>
-          <div className="">
-            <label
-              htmlFor="homeTeam"
-              className="block text-gray-700 text-sm font-bold mb-2"
-            >
-              Team
-            </label>
-            <select
-              id="homeTeam"
-              name=""
-              className="shadow appearance-none border rounded w-40 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={awayTeam}
-              onChange={(e) => onChangeHandleAway(e, e.target.value)}
-            >
-              <option value="">---Pilih Team---</option>
-              {team.map((data) => (
-                <option value={data.id}>{data.name}</option>
-              ))}
-            </select>
-          </div>
-        </form>
-        <div className="flex w-full justify-evenly items-center">
-          <div className="">Skor</div>
-          <div className="flex justify-center mt-10 countdown">
-            <div className="py-5 w-72 text-slate-50 text-center bg-blue-900 rounded-xl">
-              <h1 className="text-lg">Time</h1>
-              <h2 className="text-2xl my-5">
-                {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-              </h2>
-              {!isRunning && (
-                <button
-                  className="bg-green-600 p-2 w-20 hover:bg-green-700 transition-colors rounded-lg text-slate-50"
-                  onClick={handleStart}
-                >
-                  Start
-                </button>
-              )}
-              {isRunning && (
-                <button
-                  className="bg-yellow-600 hover:bg-yellow-700 p-2 w-20 rounded-lg"
-                  onClick={handlePause}
-                >
-                  Pause
-                </button>
-              )}
-=======
-          <div className="flex justify-center mt-10 countdown w-1/3">
-          <div className="py-5 w-72 text-slate-50 text-center bg-blue-900 rounded-xl">
-            <h1 className="text-lg">Time</h1>
-            <h2 className="text-2xl my-5">
-              {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
-            </h2>
-            {!isRunning && (
->>>>>>> b9a7ab99ceada2411812563562170c36c5c15a8d
-              <button
-                className="ml-10 p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600"
-                onClick={handleReset}
+      <main className="mt-4 w-full h-full px-6 z-10">
+        <div className="flex justify-between items-center h-1/2">
+          <div className="w-1/3">
+            <div className="flex flex-rows justify-center ">
+              <label
+                htmlFor="homeTeam"
+                className="block text-gray-700 text-2xl mr-3 font-bold"
               >
-                Reset
-              </button>
-<<<<<<< HEAD
+                Home Team
+              </label>
+              <select
+                id="homeTeam"
+                name=""
+                className="shadow appearance-none border rounded w-40 py-2 px-3 text-base text-center text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                value={homeTeam}
+                onChange={(e) => onChangeHandleHome(e, e.target.value)}
+              >
+                <option value="">---Pilih Team---</option>
+                {team.map((data) => (
+                  <option key={data.id} value={data.id}>
+                    {data.name}
+                  </option>
+                ))}
+              </select>
             </div>
-=======
-            )}
-            {isRunning && (
-              <button
-                className="bg-yellow-600 hover:bg-yellow-700 p-2 w-20 rounded-lg"
-                onClick={handlePause}
+            <div className="flex justify-center">
+              <h3 className="text-3xl font-bold pt-10">0</h3>
+            </div>
+          </div>
+          <div className="w-1/3 flex flex-col items-center bg-slate-200">
+            <div className="flex justify-center">
+              <div className="w-72 py-5 text-center">
+                <h1 className="text-2xl font-semibold">Time</h1>
+                <h2 className="text-3xl my-5 font-bold">
+                  {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
+                </h2>
+                {!isRunning ? (
+                  <button
+                    className="bg-green-600 p-2 w-20 hover:bg-green-700 transition-colors rounded-lg text-slate-50"
+                    onClick={handleStart}
+                  >
+                    Start
+                  </button>
+                ) : (
+                  <button
+                    className="bg-yellow-600 hover:bg-yellow-700 p-2 w-20 rounded-lg"
+                    onClick={handlePause}
+                  >
+                    Pause
+                  </button>
+                )}
+                <button
+                  type="submit"
+                  className=" bg-blue-600 hover:bg-blue-700 transition-colors text-slate-100 py-2 px-3 rounded-lg mx-3"
+                >
+                  Submit
+                </button>
+                <button
+                  className="p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600 mt-4 text-slate-100"
+                  onClick={handleReset}
+                >
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+          <div className="w-1/3">
+            <div className="flex flex-rows justify-center ">
+              <label
+                htmlFor="awayTeam"
+                className="block text-gray-700 text-2xl mr-3 font-bold"
               >
-                Pause
-              </button>
-            )}
-            <button
-              type="submit"
-              className=" bg-blue-600 hover:bg-blue-700 transition-colors text-slate-100 py-2 px-3 rounded-lg mx-3"
-            >
-              Submit
-            </button>
-            <button
-              className=" p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600"
-              onClick={handleReset}
-            >
-              Reset
-            </button>
->>>>>>> b9a7ab99ceada2411812563562170c36c5c15a8d
+                Away Team
+              </label>
+              <select
+                id="awayTeam"
+                name=""
+                className="shadow appearance-none border rounded w-40 py-2 px-3 text-base text-center text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                value={awayTeam}
+                onChange={(e) => onChangeHandleAway(e, e.target.value)}
+              >
+                <option value="">---Pilih Team---</option>
+                {team.map((data) => (
+                  <option key={data.id} value={data.id}>
+                    {data.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="flex justify-center">
+              <h3 className="text-3xl font-bold pt-10">0</h3>
+            </div>
           </div>
-          <div className="">Skor</div>
         </div>
-          <div className="flex justify-center w-1/3">
-            <label
-              htmlFor="homeTeam"
-              className="block text-gray-700 text-3xl mr-3 font-bold"
-            >
-              Team
-            </label>
-            <select
-              id="homeTeam"
-              name=""
-              className="shadow appearance-none border rounded w-40 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              value={awayTeam}
-              onChange={(e) => onChangeHandleAway(e, e.target.value)}
-            >
-              <option value="">---Pilih Team---</option>
-              {team.map((data) => (
-                <option value={data.id}>{data.name}</option>
-              ))}
-            </select>
-          </div>
-        </form>
-        <div className="flex justify-around">
-          <div className="team">
+        <div className="flex justify-between">
+          <div className="team w-1/3 mt-10">
             {playerHome.map((data) => (
-              <div className="flex ">
+              <div key={data.numberJersey} className="flex">
                 <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                   {data.numberJersey}
                 </button>
@@ -264,21 +217,26 @@ export default function Dasboard() {
                 <div className="ml-5">
                   <button className="w-10 h-14 bg-red-600 rounded"></button>
                 </div>
-                <div className="flex items-center justify-center ml-5 ">
+                <div className="flex items-center justify-center ml-5">
                   <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
-                  <MdSwapVert />
+                    <MdSwapVert />
                   </button>
                 </div>
               </div>
             ))}
           </div>
-          <div className="team">
+          <div className="team w-1/3 mt-10">
             {playerAway.map((data) => (
-              <div className="flex ">
+              <div key={data.numberJersey} className="flex">
+                <div className="flex items-center justify-center mr-5">
+                  <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                    <MdSwapVert />
+                  </button>
+                </div>
                 <div className="mr-5">
                   <button className="w-10 h-14 bg-red-600 rounded"></button>
                 </div>
-                <div className="">
+                <div className="mr-5">
                   <button className="w-10 h-14 bg-yellow-300 rounded"></button>
                 </div>
                 <h3 className="w-[4.5rem] -mr-4 pr-4 -z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">

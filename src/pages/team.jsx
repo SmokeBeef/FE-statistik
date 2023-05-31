@@ -51,7 +51,7 @@ export default function Team() {
   return (
     <div>
       <Navbar />
-      <main className="font-Poppins mt-5">
+      <main className="font-Poppins mt-5 w-screen">
         <button
           onClick={() => setModalOpen(true)}
           className="ml-5 bg-blue-600 text-slate-100 py-2 px-3 rounded-lg hover:bg-blue-800 transition-colors "
@@ -59,11 +59,13 @@ export default function Team() {
           Tambah Team
         </button>
         <div className="flex justify-center">
-          <table className="bg-slate-200 mt-5 border border-slate-400">
+          <table className="bg-slate-200 mt-5 border border-slate-400 w-[90%]">
             <thead className="">
               <th className="p-2 border border-slate-400">No</th>
+              <th className="p-2 border border-slate-400">Team</th>
+              <th className="p-2 border border-slate-400">Nomor Jersey</th>
               <th className="p-2 border border-slate-400">Nama</th>
-              <th className="p-2 border border-slate-400">Player</th>
+              <th className="p-2 border border-slate-400">Nomor Jersey</th>
               <th className="p-2 border border-slate-400">Action</th>
             </thead>
             <tbody className="">
