@@ -21,6 +21,7 @@ export default function Player() {
   const [nama, setNama] = useState("");
   const [jersey, setJersey] = useState("");
   const [posisi, setPosisi] = useState("");
+  const [status, setStatus] = useState("main");
   const [teamId, setTeamId] = useState();
 
   const getTeam = async () => {
@@ -38,6 +39,7 @@ export default function Player() {
       name: nama,
       numberJersey: jersey,
       position: posisi,
+      status: status,
       team_id: teamId,
     };
     console.log(data);
@@ -52,7 +54,13 @@ export default function Player() {
         setPosisi();
         setTeamId();
       }
-    });
+    }).catch(err => {
+      console.log(err)
+      swal({
+        title: err.response.data.msg,
+        icon: "warning"
+      })
+    })
   };
 
   const handleAdd = () => {
@@ -176,7 +184,7 @@ export default function Player() {
       </Page>
     </Document>
   );
-  
+
   return (
     <div className="">
       <Navbar />
@@ -321,6 +329,21 @@ export default function Player() {
                 {team.map((data) => (
                   <option value={data.id}>{data.name}</option>
                 ))}
+              </select>
+            </div>
+            <div className="mb-4">
+              <label
+                class="block text-gray-700 text-sm font-bold mb-2"
+                for="status"
+              >
+                Status
+              </label>
+              <select name="" className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                id="status"
+                value={status}
+                onChange={e => setStatus(e.target.value)}>
+                <option value="main">pemain utama</option>
+                <option value="cadangan">cadangan</option>
               </select>
             </div>
             <button

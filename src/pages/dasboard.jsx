@@ -3,13 +3,16 @@ import Navbar from "../components/Navbar";
 import axios from "../utils/axios";
 import { MdSwapVert } from "react-icons/md";
 import Background from "../components/background";
+import swal from "sweetalert";
 
 export default function Dasboard() {
   const [countdown, setCountdown] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
+  const [injuryTime, setInjuryTime] = useState(0)
   // Form match
   const [homeTeam, setHomeTeam] = useState();
   const [awayTeam, setAwayTeam] = useState();
+  const [matchId, setMatchId] = useState()
 
   // Data hasil fetch
   const [team, setTeam] = useState([]);
@@ -32,10 +35,6 @@ export default function Dasboard() {
       clearInterval(timer);
     };
   }, [isRunning]);
-
-  const handleStart = () => {
-    setIsRunning(true);
-  };
 
   const handlePause = () => {
     setIsRunning(false);
@@ -61,9 +60,28 @@ export default function Dasboard() {
 
   // Button
 
-  const onSubmitMatch = async () => {
-    const res = await axios.post("match/add", {});
-  };
+  const onPLayMatch = async () => {
+    setIsRunning(true)
+    if (!matchId) {
+      await axios.post("match/add", {
+        homeTeam: homeTeam,
+        awayTeam: awayTeam
+      })
+        .then(res => {
+          setMatchId(res.data.data.id)
+        })
+        .catch(err => {
+          setCountdown(0)
+          setIsRunning(false)
+          console.log(err);
+          swal({
+            title: err.response.data.msg,
+            icon: "warning"
+          })
+        })
+    }
+  }
+
   // ------
 
   // onChangeHandle
@@ -98,13 +116,19 @@ export default function Dasboard() {
   }, []);
 
   useEffect(() => {
-    if (countdown === 2700) setIsRunning(false);
-    if (countdown === 5400) setIsRunning(false);
+    if (countdown === 2700 + injuryTime) {
+      setIsRunning(false);
+      setInjuryTime(0)
+    }
+    if (countdown === 5400 + injuryTime) {
+      setIsRunning(false);
+      setInjuryTime(0)
+    }
   }, [countdown]);
   return (
     <div className="font-Poppins">
       <Navbar />
-      <Background/>
+      <Background />
       <main className="mt-4 w-full h-full px-6 z-1 main-content">
         <div className="flex justify-between items-center h-1/2">
           <div className="w-1/3">
@@ -143,25 +167,20 @@ export default function Dasboard() {
                 </h2>
                 {!isRunning ? (
                   <button
-                    className="bg-green-600 p-2 w-20 hover:bg-green-700 transition-colors rounded-lg text-slate-50"
-                    onClick={handleStart}
+                    className="bg-green-600 p-2 w-20 mr-5 hover:bg-green-700 transition-colors rounded-lg text-slate-50"
+                    onClick={onPLayMatch}
                   >
                     Start
                   </button>
                 ) : (
                   <button
-                    className="bg-yellow-600 hover:bg-yellow-700 p-2 w-20 rounded-lg"
+                    className="bg-yellow-600 mr-5 text-slate-100 hover:bg-yellow-700 p-2 w-20 rounded-lg"
                     onClick={handlePause}
                   >
                     Pause
                   </button>
                 )}
-                <button
-                  type="submit"
-                  className=" bg-blue-600 hover:bg-blue-700 transition-colors text-slate-100 py-2 px-3 rounded-lg mx-3"
-                >
-                  Submit
-                </button>
+
                 <button
                   className="p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600 mt-4 text-slate-100"
                   onClick={handleReset}
@@ -201,57 +220,66 @@ export default function Dasboard() {
         </div>
         <div className="flex justify-between">
           <div className="team w-1/3 mt-10 ">
-            {playerHome.map((data) => (
-              <div key={data.numberJersey} className="flex">
-                <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
-                  {data.numberJersey}
-                </button>
-                <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-r-xl -ml-4 h-14 pl-8 w-56 capitalize">
-                  {data.name}
-                </h3>
-                <h3 className="w-[4.5rem] -z-[1] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
-                  {data.position}
-                </h3>
-                <div className="ml-5">
-                  <button className="w-10 h-14 bg-yellow-300 rounded"></button>
-                </div>
-                <div className="ml-5">
-                  <button className="w-10 h-14 bg-red-600 rounded"></button>
-                </div>
-                <div className="flex items-center justify-center ml-5">
-                  <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
-                    <MdSwapVert className="text-white"/>
+            {playerHome.map((data) => {
+              if (data.status === "main")
+
+                return <div key={data.numberJersey} className="flex">
+                  <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                    {data.numberJersey}
                   </button>
+                  <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-r-xl -ml-4 h-14 pl-8 w-56 capitalize">
+                    {data.name}
+                  </h3>
+                  <h3 className="w-[4.5rem] -z-[1] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
+                    {data.position}
+                  </h3>
+                  <div className="ml-5">
+                    <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                  </div>
+                  <div className="ml-5">
+                    <button className="w-10 h-14 bg-red-600 rounded"></button>
+                  </div>
+                  <div className="flex items-center justify-center ml-5">
+                    <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                      <MdSwapVert className="text-white" />
+                    </button>
+                  </div>
+
                 </div>
-              </div>
-            ))}
+
+            })}
           </div>
           <div className="team w-1/3 mt-10">
-            {playerAway.map((data) => (
-              <div key={data.numberJersey} className="flex">
-                <div className="flex items-center justify-center mr-5">
-                  <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
-                    <MdSwapVert className="text-white"/>
+            {playerAway.map((data) => {
+              if (data.status === "main")
+                return <div key={data.numberJersey} className="flex">
+                  <div className="flex items-center justify-center mr-5">
+                    <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                      <MdSwapVert className="text-white" />
+                    </button>
+                  </div>
+                  <div className="mr-5">
+                    <button className="w-10 h-14 bg-red-600 rounded"></button>
+                  </div>
+                  <div className="mr-5">
+                    <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                  </div>
+                  <h3 className="w-[4.5rem] -mr-4 pr-4 -z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
+                    {data.position}
+                  </h3>
+                  <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-l-xl justify-end pr-8 -mr-4 h-14 px-4 w-56 capitalize">
+                    {data.name}
+                  </h3>
+                  <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                    {data.numberJersey}
                   </button>
                 </div>
-                <div className="mr-5">
-                  <button className="w-10 h-14 bg-red-600 rounded"></button>
-                </div>
-                <div className="mr-5">
-                  <button className="w-10 h-14 bg-yellow-300 rounded"></button>
-                </div>
-                <h3 className="w-[4.5rem] -mr-4 pr-4 -z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
-                  {data.position}
-                </h3>
-                <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-l-xl justify-end pr-8 -mr-4 h-14 px-4 w-56 capitalize">
-                  {data.name}
-                </h3>
-                <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
-                  {data.numberJersey}
-                </button>
-              </div>
-            ))}
+            })}
           </div>
+        </div>
+
+        <div className="">
+          <h1 className="text-slate-100 font-semibold text-3xl">Cadangan</h1>
         </div>
       </main>
     </div>
