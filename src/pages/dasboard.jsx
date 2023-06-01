@@ -4,11 +4,15 @@ import axios from "../utils/axios";
 import { MdSwapVert } from "react-icons/md";
 import Background from "../components/background";
 import swal from "sweetalert";
+import Modal from "../components/Modal";
 
 export default function Dasboard() {
   const [countdown, setCountdown] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [injuryTime, setInjuryTime] = useState(0)
+  const [openModal, setOpenModal] = useState(false)
+  const [change, setChange] = useState("")
+  const [indexChange, setIndexChange] = useState("")
   // Form match
   const [homeTeam, setHomeTeam] = useState();
   const [awayTeam, setAwayTeam] = useState();
@@ -16,10 +20,11 @@ export default function Dasboard() {
 
   // Data hasil fetch
   const [team, setTeam] = useState([]);
-
   // For match
   const [playerHome, setPlayerHome] = useState([]);
+  const [playerHomeCadangan, setPlayerHomeCadangan] = useState([]);
   const [playerAway, setPlayerAway] = useState([]);
+  const [playerAwayCadangan, setPlayerAwayCadangan] = useState([]);
 
   // Countdown
   useEffect(() => {
@@ -60,6 +65,17 @@ export default function Dasboard() {
 
   // Button
 
+  const switchPlayerHome = (index) => {
+    setIndexChange(index)
+    setChange("home")
+    setOpenModal(true)
+  }
+  const switchPlayerAway = (index) => {
+    setIndexChange(index)
+    setChange("away")
+    setOpenModal(true)
+  }
+
   const onPLayMatch = async () => {
     setIsRunning(true)
     if (!matchId) {
@@ -90,21 +106,27 @@ export default function Dasboard() {
     setHomeTeam(data);
 
     if (data) {
-      const res = await axios.get("player/id/" + data);
+      const res = await axios.get("player/id/" + data + "/" + "main");
       setPlayerHome(res.data.data);
       console.log(data);
+      const resCadangan = await axios.get("player/id/" + data + "/" + "cadangan");
+      setPlayerHomeCadangan(resCadangan.data.data)
     } else {
       setPlayerHome([]);
+      setPlayerHomeCadangan([])
     }
   };
   const onChangeHandleAway = async (e, data) => {
     setAwayTeam(data);
     if (data) {
-      const res = await axios.get("player/id/" + data);
+      const res = await axios.get("player/id/" + data + "/" + "main");
       setPlayerAway(res.data.data);
       console.log(data);
+      const resCadangan = await axios.get("player/id/" + data + "/" + "cadangan");
+      setPlayerAwayCadangan(resCadangan.data.data)
     } else {
       setPlayerAway([]);
+      setPlayerAwayCadangan([])
     }
   };
 
@@ -220,10 +242,74 @@ export default function Dasboard() {
         </div>
         <div className="flex justify-between">
           <div className="team w-1/3 mt-10 ">
-            {playerHome.map((data) => {
-              if (data.status === "main")
+            {playerHome.map((data, index) => (
 
-                return <div key={data.numberJersey} className="flex">
+
+              <div key={data.numberJersey} className="flex">
+                <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                  {data.numberJersey}
+                </button>
+                <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-r-xl -ml-4 h-14 pl-8 w-56 capitalize">
+                  {data.name}
+                </h3>
+                <h3 className="w-[4.5rem] -z-[1] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
+                  {data.position}
+                </h3>
+                <div className="ml-5">
+                  <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                </div>
+                <div className="ml-5">
+                  <button className="w-10 h-14 bg-red-600 rounded"></button>
+                </div>
+                <div className="flex items-center justify-center ml-5">
+                  <button onClick={() => switchPlayerHome(index)} className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                    <MdSwapVert className="text-white" />
+                  </button>
+                </div>
+
+              </div>
+
+            ))}
+          </div>
+          <div className="team w-1/3 mt-10">
+            {playerAway.map((data, index) => (
+
+              <div key={data.numberJersey} className="flex">
+                <div className="flex items-center justify-center mr-5">
+                  <button onClick={() => switchPlayerAway(index)} className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                    <MdSwapVert className="text-white" />
+                  </button>
+                </div>
+                <div className="mr-5">
+                  <button className="w-10 h-14 bg-red-600 rounded"></button>
+                </div>
+                <div className="mr-5">
+                  <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                </div>
+                <h3 className="w-[4.5rem] -mr-4 pr-4 -z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
+                  {data.position}
+                </h3>
+                <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-l-xl justify-end pr-8 -mr-4 h-14 px-4 w-56 capitalize">
+                  {data.name}
+                </h3>
+                <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                  {data.numberJersey}
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="">
+          {(playerAway[0] || playerHome[0]) ? (
+            <h1 className="text-slate-100 font-semibold text-3xl text-center bg-slate-800">Pemain Pengganti</h1>
+          ) : ""}
+          <div className="flex justify-between">
+            <div className="team w-1/3 mt-10 ">
+              {playerHomeCadangan.map((data) => (
+
+
+                <div key={data.numberJersey} className="flex">
                   <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                     {data.numberJersey}
                   </button>
@@ -247,12 +333,11 @@ export default function Dasboard() {
 
                 </div>
 
-            })}
-          </div>
-          <div className="team w-1/3 mt-10">
-            {playerAway.map((data) => {
-              if (data.status === "main")
-                return <div key={data.numberJersey} className="flex">
+              ))}
+            </div>
+            <div className=" w-1/3 mt-10">
+              {playerAwayCadangan.map((data) => (
+                <div key={data.numberJersey} className="flex">
                   <div className="flex items-center justify-center mr-5">
                     <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
                       <MdSwapVert className="text-white" />
@@ -264,7 +349,7 @@ export default function Dasboard() {
                   <div className="mr-5">
                     <button className="w-10 h-14 bg-yellow-300 rounded"></button>
                   </div>
-                  <h3 className="w-[4.5rem] -mr-4 pr-4 -z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
+                  <h3 className="w-[4.5rem] -mr-4 pr-4 z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
                     {data.position}
                   </h3>
                   <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-l-xl justify-end pr-8 -mr-4 h-14 px-4 w-56 capitalize">
@@ -274,13 +359,69 @@ export default function Dasboard() {
                     {data.numberJersey}
                   </button>
                 </div>
-            })}
+              ))}
+            </div>
           </div>
         </div>
 
-        <div className="">
-          <h1 className="text-slate-100 font-semibold text-3xl">Cadangan</h1>
-        </div>
+
+
+        <Modal isVisible={openModal} onClose={() => setOpenModal(false)}>
+          <h1 className="text-center text-3xl">Pemain Cadangan</h1>
+          {(change === "home") ? (
+            <div className="p-10 flex justify-center flex-col gap-y-5">
+              {playerHomeCadangan.map((data) => (
+
+                <div key={data.numberJersey} className="flex justify-center">
+                  <h2 className="text-slate-100 py-2 px-3 rounded z-[2] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                    {data.numberJersey}
+                  </h2>
+                  <h3 className="flex items-center z-[1] bg-slate-700 text-slate-100 rounded-r-xl -ml-4 h-14 pl-8 w-56 capitalize">
+                    {data.name}
+                  </h3>
+                  <h3 className="w-[4.5rem] z-[0] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
+                    {data.position}
+                  </h3>
+
+                  <div className="flex items-center justify-center ml-5">
+                    <button className=" hover:text-slate-800 transition-colors text-4xl">
+                      <MdSwapVert className="text-slate-800" />
+                    </button>
+                  </div>
+
+                </div>
+
+              ))}
+            </div>
+          ) : (
+            <div className="">
+              <div className="p-10 flex justify-center flex-col gap-y-5">
+                {playerAwayCadangan.map((data) => (
+
+                  <div key={data.numberJersey} className="flex justify-center">
+                    <h2 className="text-slate-100 py-2 px-3 rounded z-[2] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                      {data.numberJersey}
+                    </h2>
+                    <h3 className="flex items-center z-[1] bg-slate-700 text-slate-100 rounded-r-xl -ml-4 h-14 pl-8 w-56 capitalize">
+                      {data.name}
+                    </h3>
+                    <h3 className="w-[4.5rem] z-[0] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
+                      {data.position}
+                    </h3>
+
+                    <div className="flex items-center justify-center ml-5">
+                      <button className=" hover:text-slate-800 transition-colors text-4xl">
+                        <MdSwapVert className="text-slate-800" />
+                      </button>
+                    </div>
+
+                  </div>
+
+                ))}
+              </div>
+            </div>
+          )}
+        </Modal>
       </main>
     </div>
   );

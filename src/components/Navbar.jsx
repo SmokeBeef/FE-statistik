@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Navbar() {
   return (
-    <div className="bg-red-600 flex hover:bg-fixed">
+    <div className="h-[4.3rem] bg-red-600 flex hover:bg-fixed ">
       <div className="flex items-center ml-7">
         <a
           href="/"
