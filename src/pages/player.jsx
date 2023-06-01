@@ -5,6 +5,14 @@ import axios from "../utils/axios";
 import swal from "sweetalert";
 import Background from "../components/background";
 import { useDownloadExcel } from "react-export-table-to-excel";
+import {
+  PDFDownloadLink,
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+} from "@react-pdf/renderer";
 
 export default function Player() {
   const [modalOpen, setModalOpen] = useState(false);
@@ -72,21 +80,107 @@ export default function Player() {
   }, []);
 
   const today = new Date();
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-  const formattedDate = today.toLocaleDateString('en-GB', options).replace(/\//g, '-');
+  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const formattedDate = today
+    .toLocaleDateString("en-GB", options)
+    .replace(/\//g, "-");
 
   const tableRef = useRef(null);
 
-  const {onDownload} = useDownloadExcel({
+  const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
-    filename:`Play-${formattedDate}.xlsx`,
-    sheet:`Play-${formattedDate}.xlsx`
-  })
+    filename: `Play-${formattedDate}.xlsx`,
+    sheet: `Play-${formattedDate}.xlsx`,
+  });
 
+  const styles = StyleSheet.create({
+    page: {
+      flexDirection: "row",
+      backgroundColor: "#ffffff",
+    },
+    section: {
+      margin: 10,
+      padding: 10,
+      flexGrow: 1,
+    },
+    table: {
+      marginBottom: 10,
+      fontFamily: "Helvetica",
+      fontSize: 10,
+      width: "100%",
+    },
+    tableHeader: {
+      backgroundColor: "#f0f0f0",
+      fontWeight: "bold",
+      width: "100%",
+    },
+    tableRow: {
+      borderBottomWidth: 1,
+      borderColor: "#f0f0f0",
+      flexDirection: "row",
+    },
+    tableCell: {
+      padding: 5,
+      color: "#000000",
+    },
+    tableHeaderText: {
+      fontSize: "20px",
+      fontWeight: 700,
+      textAlign: "center",
+    },
+  });
+
+  const MyDoc = ({ player }) => (
+    <Document>
+      <Page size="A4">
+        <View style={styles.section}>
+          <View style={styles.table}>
+            <View style={styles.tableRow}>
+              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+                <Text style={styles.tableHeaderText}>No</Text>
+              </View>
+              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+                <Text style={styles.tableHeaderText}>Nama</Text>
+              </View>
+              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+                <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
+              </View>
+              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+                <Text style={styles.tableHeaderText}>Posisi</Text>
+              </View>
+              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+                <Text style={styles.tableHeaderText}>Team</Text>
+              </View>
+            </View>
+            {player.map((data, index) => (
+              <View style={styles.tableRow} key={index}>
+                <View style={styles.tableCell}>
+                  <Text>{index + 1}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.numberJersey}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.position}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.team.name}</Text>
+                </View>
+              </View>
+            ))}
+          </View>
+        </View>
+      </Page>
+    </Document>
+  );
+  
   return (
     <div className="">
       <Navbar />
-      <Background/>
+      <Background />
       <main className="font-Poppins mt-5">
         <button
           onClick={handleAdd}
@@ -94,11 +188,27 @@ export default function Player() {
         >
           Tambah Player
         </button>
-        <button className="bg-green-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-green-800 transition-colors" onClick={onDownload}>Export to Excel</button>
-        <button className="bg-red-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-red-800 transition-colors">Export to PDF</button>
+        <PDFDownloadLink
+          document={<MyDoc player={player} />}
+          fileName={`Play-${formattedDate}.pdf`}
+          className="bg-red-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-red-800 transition-colors"
+        >
+          {({ blob, url, loading, error }) =>
+            loading ? "Loading document..." : "Export to PDF"
+          }
+        </PDFDownloadLink>
+        <button
+          className="bg-green-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-green-800 transition-colors"
+          onClick={onDownload}
+        >
+          Export to Excel
+        </button>
         <div className="flex justify-center">
-          <table className="bg-slate-200 mt-5 border border-slate-400 w-[90%]" ref={tableRef}>  
-            <thead className="">
+          <table
+            className="bg-slate-200 mt-5 border border-slate-400 w-[90%]"
+            ref={tableRef}
+          >
+            <thead className="text-lg">
               <th className="p-2 border border-slate-300">No</th>
               <th className="p-2 border border-slate-300">Nama</th>
               <th className="p-2 border border-slate-300">Nomor Jersey</th>
