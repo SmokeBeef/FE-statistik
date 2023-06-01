@@ -17,8 +17,7 @@ export default function Team() {
   };
 
   const onSubmit = async (e) => {
-
-    const data = new FormData()
+    const data = new FormData();
 
     console.log(data);
     e.preventDefault();
@@ -52,7 +51,7 @@ export default function Team() {
   return (
     <div>
       <Navbar />
-      <Background/>
+      <Background />
       <main className="font-Poppins mt-5 w-screen">
         <button
           onClick={() => setModalOpen(true)}
@@ -61,32 +60,42 @@ export default function Team() {
           Tambah Team
         </button>
         <div className="flex justify-center ">
-          <table className="bg-slate-200 mt-5 border border-slate-400 w-[90%]">
-            <thead className="">
-              <th className="p-2 border border-slate-400">No</th>
-              <th className="p-2 border border-slate-400">Team</th>
-              <th className="p-2 border border-slate-400">Player Data</th>
-              <th className="p-2 border border-slate-400">Action</th>
+          <table className="bg-white mt-5 border border-slate-400 w-[90%]">
+            <thead>
+              <tr>
+                <th className="p-2 border border-slate-400">No</th>
+                <th className="p-2 border border-slate-400">Team</th>
+                <th className="p-0 border border-slate-400">
+                  <th className="p-2  w-1/2 ">Nama</th>
+                  <th className="p-2 border-x border-slate-400 w-1/2">Nomor Jersey</th>
+                  <th className="p-2  w-1/2 ">Position</th>
+                </th>
+                <th className="p-2 border border-slate-400">Action</th>
+              </tr>
             </thead>
             <tbody className="text-center">
               {team.map((data, index) => (
                 <tr>
-                  <td className="p-2 border border-slate-300 ">{index + 1}</td>
+                  <td className="p-2 border border-slate-300">{index + 1}</td>
                   <td className="p-2 border border-slate-300">{data.name}</td>
-                  <td className="p-2 border border-slate-300">
-                    <ul>
-                      {data.player.map((data, index) => (
-                        <li>
-                          Jersey No : {data.numberJersey} <br />
-                          Nama : {data.name} <br />
-                          Posisi : {data.position}
-                        </li>
-                      ))}
-                    </ul>
+                  <td className="p-0 border border-slate-300">
+                    {data.player.map((playerData, playerIndex) => (
+                      <div className="m-0" key={playerIndex}>
+                        <td className="p-2 border border-slate-300 w-1/2">
+                          {playerData.name}
+                        </td>
+                        <td className="p-2 border border-slate-300 w-1/2">
+                          {playerData.numberJersey}
+                        </td>
+                        <td className="p-2 border border-slate-300 w-1/2">
+                          {playerData.position}
+                        </td>
+                      </div>
+                    ))}
                   </td>
-                  <td className="p-2 border border-slate-300 ">
+                  <td className="p-2 border border-slate-300">
                     <button
-                      onClick={() => onDelete(data.id)}
+                      onClick={() => onDelete(team.id)}
                       className="bg-red-500 py-2 px-3 rounded-lg text-slate-100 hover:bg-red-600"
                     >
                       Delete
@@ -130,7 +139,7 @@ export default function Team() {
                 accept="image/png, image/jpg, image/jpeg"
                 value={logo}
                 onChange={(e) => {
-                  setLogo(e.target.files[0])
+                  setLogo(e.target.files[0]);
                   console.log(e.target.files);
                   console.log(e.target.files[0]);
                 }}

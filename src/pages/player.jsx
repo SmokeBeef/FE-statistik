@@ -113,6 +113,7 @@ export default function Player() {
       backgroundColor: "#f0f0f0",
       fontWeight: "bold",
       width: "100%",
+      padding:5,
     },
     tableRow: {
       borderBottomWidth: 1,
@@ -120,11 +121,16 @@ export default function Player() {
       flexDirection: "row",
     },
     tableCell: {
-      padding: 5,
+      paddingHorizontal: 25,
+      paddingVertical:5,
       color: "#000000",
+      textAlign:"center",
+      width:"100%",
+      alignSelf:"center",
+      
     },
     tableHeaderText: {
-      fontSize: "20px",
+      fontSize: "10px",
       fontWeight: 700,
       textAlign: "center",
     },
@@ -136,19 +142,19 @@ export default function Player() {
         <View style={styles.section}>
           <View style={styles.table}>
             <View style={styles.tableRow}>
-              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+              <View style={{ ...styles.tableHeader }}>
                 <Text style={styles.tableHeaderText}>No</Text>
               </View>
-              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+              <View style={{ ...styles.tableHeader }}>
                 <Text style={styles.tableHeaderText}>Nama</Text>
               </View>
-              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+              <View style={{ ...styles.tableHeader }}>
                 <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
               </View>
-              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+              <View style={{ ...styles.tableHeader }}>
                 <Text style={styles.tableHeaderText}>Posisi</Text>
               </View>
-              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
+              <View style={{ ...styles.tableHeader }}>
                 <Text style={styles.tableHeaderText}>Team</Text>
               </View>
             </View>

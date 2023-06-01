@@ -90,9 +90,6 @@ export default function Dasboard() {
     }
   };
 
-  // --------------
-
-  // UseEffect
   useEffect(() => {
     getTeam();
   }, []);
