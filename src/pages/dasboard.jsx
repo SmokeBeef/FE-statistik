@@ -312,10 +312,10 @@ export default function Dasboard() {
                   {data.position}
                 </h3>
                 <div className="ml-5">
-                  <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                  <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
                 </div>
                 <div className="ml-5">
-                  <button className="w-10 h-14 bg-red-600 rounded"></button>
+                  <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
                 </div>
                 <div className="flex items-center justify-center ml-5">
                   <button
@@ -340,10 +340,10 @@ export default function Dasboard() {
                   </button>
                 </div>
                 <div className="mr-5">
-                  <button className="w-10 h-14 bg-red-600 rounded"></button>
+                  <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
                 </div>
                 <div className="mr-5">
-                  <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                  <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
                 </div>
                 <h3 className="w-[4.5rem] -mr-4 pr-4 -z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
                   {data.position}
@@ -359,9 +359,9 @@ export default function Dasboard() {
           </div>
         </div>
 
-        <div className="">
+        <div className="mt-5">
           {playerAway[0] || playerHome[0] ? (
-            <h1 className="text-slate-100 font-semibold text-3xl text-center bg-slate-800">
+            <h1 className="py-2 text-slate-100 font-semibold text-3xl text-center bg-slate-800 ">
               Pemain Pengganti
             </h1>
           ) : (
@@ -381,10 +381,10 @@ export default function Dasboard() {
                     {data.position}
                   </h3>
                   <div className="ml-5">
-                    <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                    <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
                   </div>
                   <div className="ml-5">
-                    <button className="w-10 h-14 bg-red-600 rounded"></button>
+                    <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
                   </div>
                   <div className="flex items-center justify-center ml-5">
                     <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
@@ -403,10 +403,10 @@ export default function Dasboard() {
                     </button>
                   </div>
                   <div className="mr-5">
-                    <button className="w-10 h-14 bg-red-600 rounded"></button>
+                    <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
                   </div>
                   <div className="mr-5">
-                    <button className="w-10 h-14 bg-yellow-300 rounded"></button>
+                    <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
                   </div>
                   <h3 className="w-[4.5rem] -mr-4 pr-4 z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
                     {data.position}
@@ -422,7 +422,6 @@ export default function Dasboard() {
             </div>
           </div>
         </div>
-
         <Modal isVisible={openModal} onClose={() => setOpenModal(false)}>
           <h1 className="text-center text-3xl">Pemain Cadangan</h1>
           {change === "home" ? (
@@ -461,7 +460,6 @@ export default function Dasboard() {
                     <h3 className="w-[4.5rem] z-[0] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
                       {data.position}
                     </h3>
-
                     <div className="flex items-center justify-center ml-5">
                       <button className=" hover:text-slate-800 transition-colors text-4xl">
                         <MdSwapVert className="text-slate-800" />

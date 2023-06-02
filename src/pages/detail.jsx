@@ -13,11 +13,17 @@ import {
 
 export default function Detail() {
   const tableRef = useRef(null);
+  const today = new Date();
+  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const formattedDate = today
+    .toLocaleDateString("en-GB", options)
+    .replace(/\//g, "-");
+
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
-    filename: "excel" - Date.now,
-    sheet: "excel" - Date.now,
+    filename: `Play- ${formattedDate}`,
+    sheet: `Play- ${formattedDate}`,
   });
 
   const styles = StyleSheet.create({
@@ -85,18 +91,28 @@ export default function Detail() {
       </Page>
     </Document>
   );
-  const today = new Date();
-  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
-  const formattedDate = today
-    .toLocaleDateString("en-GB", options)
-    .replace(/\//g, "-");
 
   return (
     <div>
       <Navbar />
       <Background />
       <main className="font-Poppins">
-        <form action="" className="mt-8 text-center">
+      {/* <PDFDownloadLink
+          document={<MyDoc detail={detail} />}
+          fileName={`Play-${formattedDate}.pdf`}
+          className="bg-red-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-red-800 transition-colors"
+        >
+          {({ blob, url, loading, error }) =>
+            loading ? "Loading document..." : "Export to PDF"
+          }
+        </PDFDownloadLink> */}
+        <button
+          className="bg-green-500 text-slate-100 rounded-lg py-2 px-3 ml-4 mt-4 hover:bg-green-800 transition-colors shadow-md"
+          onClick={onDownload}
+        >
+          Export to Excel
+        </button>
+        <form action="" className="mt-4 text-center">
           <div className="">
             <label
               htmlFor="match"
@@ -131,39 +147,6 @@ export default function Detail() {
               <span>1</span>
             </div>
             <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Shots</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
-            </div>
-          </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Shots On Target</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
-            </div>
-          </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Foul</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
-            </div>
-          </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
               <span>Yellow Card</span>
             </div>
             <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
@@ -181,39 +164,6 @@ export default function Detail() {
               <span>3</span>
             </div>
           </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Offsides</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
-            </div>
-          </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Corners</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
-            </div>
-          </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1%</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Possession</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3%</span>
-            </div>
-          </div>
         </div>
         <div className="flex justify-center my-10">
           <table
@@ -228,7 +178,6 @@ export default function Detail() {
               <th className="p-2 border border-slate-300">Team</th>
               <th className="p-2 border border-slate-300">Kartu Merah</th>
               <th className="p-2 border border-slate-300">Kartu Kuning</th>
-              <th className="p-2 border border-slate-300">Foul</th>
             </thead>
             <tbody className="text-center">
                 <tr>
@@ -239,9 +188,6 @@ export default function Detail() {
                   </td>
                   <td className="p-2 border border-slate-300">
                    Posisi 
-                  </td>
-                  <td className="p-2 border border-slate-300">
-                    Team
                   </td>
                   <td className="p-2 border border-slate-300">
                     Team
