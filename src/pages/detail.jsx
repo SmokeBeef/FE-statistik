@@ -9,6 +9,7 @@ import {
   View,
   Document,
   StyleSheet,
+  Image
 } from "@react-pdf/renderer";
 import axios from "../utils/axios"
 
@@ -22,6 +23,7 @@ export default function Detail() {
 
   const [dataMatch, setDataMatch] = useState([])
   const [data, setData] = useState()
+  const [player, setPlayer] = useState([])
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -127,6 +129,17 @@ export default function Detail() {
     .then(res => {
       console.log(res.data);
       setData(res.data.data)
+      let data = []
+      console.log(res.data.data.home_team.player);
+      res.data.data.home_team.player.map(player => {
+        data.push(player)
+      })
+      res.data.data.away_team.player.map(player => {
+        data.push(player)
+      })
+     
+      console.log(data);
+      setPlayer(data)
     })
     .catch(err => {
 
