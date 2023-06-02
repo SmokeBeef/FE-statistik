@@ -27,6 +27,29 @@ export default function Dasboard() {
   const [playerAway, setPlayerAway] = useState([]);
   const [playerAwayCadangan, setPlayerAwayCadangan] = useState([]);
 
+  const [team1Possession, setTeam1Possession] = useState(0);
+  const [team2Possession, setTeam2Possession] = useState(0);
+  const [isTeam1Running, setIsTeam1Running] = useState(false);
+  const [isTeam2Running, setIsTeam2Running] = useState(false);
+
+  const handlePause = () => {
+    setIsRunning(false);
+    setIsTeam1Running(false);
+    setIsTeam2Running(false);
+  };
+
+  const handleTeam1Possession = () => {
+    if (!isRunning) return;
+    setIsTeam1Running((prev) => !prev);
+    setIsTeam2Running(false);
+  };
+
+  const handleTeam2Possession = () => {
+    if (!isRunning) return;
+    setIsTeam2Running((prev) => !prev);
+    setIsTeam1Running(false);
+  };
+
   useEffect(() => {
     let timer = null;
 
@@ -40,15 +63,6 @@ export default function Dasboard() {
       clearInterval(timer);
     };
   }, [isRunning]);
-
-  const handlePause = () => {
-    setIsRunning(false);
-  };
-
-  const handleReset = () => {
-    setCountdown(0);
-    setIsRunning(false);
-  };
 
   const minutes = Math.floor(countdown / 60);
   const seconds = countdown % 60;
@@ -146,6 +160,30 @@ export default function Dasboard() {
     }
   }, [countdown]);
 
+  useEffect(() => {
+    let intervalId;
+
+    if (isRunning) {
+      intervalId = setInterval(() => {
+        if (isTeam1Running) {
+          setTeam1Possession((prevPossession) => prevPossession + 1);
+        }
+
+        if (isTeam2Running) {
+          setTeam2Possession((prevPossession) => prevPossession + 1);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isRunning, isTeam1Running, isTeam2Running]);
+
+
+  console.log(team1Possession);
+  console.log(team2Possession);
+
   return (
     <div className="font-Poppins">
       <Navbar />
@@ -187,24 +225,46 @@ export default function Dasboard() {
                   {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
                 </h2>
                 <div className="flex justify-center w-full ">
-                  <button className="p-2 rounded-lg bg-blue-600 text-slate-100 flex items-center">
-                    <IoIosArrowBack className="mr-2" /> Posession
-                  </button>
+                  {!isTeam1Running ? (
+                    <button className="p-2 rounded-lg bg-blue-600 hover:bg-blue-800 text-slate-100 flex items-center"
+                    onClick={handleTeam1Possession}>
+                      <IoIosArrowBack className="mr-2" /> Posession
+                    </button>
+                  ) : (
+                    <button className="p-2 rounded-lg bg-blue-800 hover::bg-blue-600 text-slate-100 flex items-center"
+                    onClick={handleTeam1Possession}>
+                      <IoIosArrowBack className="mr-2" /> Posession
+                    </button>
+                  )}
                   {!isRunning ? (
-                    <button className="bg-green-600 p-2 w-20 mx-3 rounded-lg text-slate-50">
+                    <button
+                      className="bg-green-600 hover:bg-green-700 p-2 w-20 mx-3 rounded-lg text-slate-50"
+                      onClick={onPLayMatch}
+                    >
                       Start
                     </button>
                   ) : (
-                    <button className="bg-yellow-500 w-20 p-2 rounded-lg text-slate-100">
+                    <button
+                      className="bg-yellow-500 hover:bg-yellow-700 w-20 p-2 rounded-lg text-slate-100"
+                      onClick={handlePause}
+                    >
                       Pause
                     </button>
                   )}
-                  <button className="p-2 rounded-lg w-20 bg-red-600 mr-3 text-slate-100">
+                  <button className="p-2 rounded-lg w-20 bg-red-600 mr-3 hover:bg-red-700 text-slate-100">
                     Reset
                   </button>
-                  <button className="p-2 rounded-lg bg-blue-600 text-slate-100 flex items-center">
-                    Posession <IoIosArrowForward className="ml-2" />
-                  </button>
+                  {!isTeam2Running ? (
+                    <button className="p-2 rounded-lg bg-blue-600 hover:bg-blue-800 text-slate-100 flex items-center"
+                    onClick={handleTeam2Possession}>
+                      Posession <IoIosArrowForward className="mr-2" />
+                    </button>
+                  ) : (
+                    <button className="p-2 rounded-lg bg-blue-800 hover::bg-blue-600 text-slate-100 flex items-center"
+                    onClick={handleTeam2Possession}>
+                      Posession <IoIosArrowForward className="mr-2" />
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
