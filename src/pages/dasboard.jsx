@@ -414,10 +414,6 @@ export default function Dasboard() {
                   {data.position}
                 </h3>
                 <div className="ml-5">
-                  <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
-                </div>
-                <div className="ml-5">
-                  <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
                   <button
                     onClick={() => yellowCard(data.id, data.name)}
                     className="w-10 h-14 bg-yellow-300 rounded"></button>
@@ -450,10 +446,6 @@ export default function Dasboard() {
                   </button>
                 </div>
                 <div className="mr-5">
-                  <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
-                </div>
-                <div className="mr-5">
-                  <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
                   <button
                     onClick={() => redCard(data.id, data.name)}
                     className="w-10 h-14 bg-red-600 rounded"></button>

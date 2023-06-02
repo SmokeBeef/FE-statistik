@@ -9,6 +9,7 @@ import {
   View,
   Document,
   StyleSheet,
+  Image
 } from "@react-pdf/renderer";
 import axios from "../utils/axios"
 
@@ -270,9 +271,6 @@ export default function Detail() {
                 </td>
                 <td className="p-2 border border-slate-300">
                   Posisi
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
                 </td>
                 <td className="p-2 border border-slate-300">
                   Team
