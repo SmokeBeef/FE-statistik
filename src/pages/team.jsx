@@ -9,16 +9,22 @@ export default function Team() {
   const [modalOpen, setModalOpen] = useState(false);
   const [team, setTeam] = useState([]);
   const [nama, setNama] = useState("");
-  const [logo, setLogo] = useState();
+  const [img, setImg] = useState([]);
 
   const getAll = async () => {
     const res = await axios.get("/team/");
     setTeam(res.data.data);
   };
 
-  const onSubmit = async (e) => {
-    const data = new FormData();
+useEffect(() => {
+  console.log(img);
+}, [img])
 
+  const onSubmit = async (e) => {
+
+    const data = new FormData()
+    data.append("name", nama)
+    data.append("logo", img)
     console.log(data);
     e.preventDefault();
     await axios.post("team/add", data, {}).then((res) => {
@@ -27,7 +33,19 @@ export default function Team() {
         getAll();
         setModalOpen(false);
       }
-    });
+      else {
+        swal({
+          title: res.data.msg,
+          icon: "warning"
+        })
+      }
+    }).catch(err => {
+      console.log(err);
+      swal({
+        title: err.msg,
+        icon: "warning"
+      })
+    })
   };
 
   const onDelete = (id) => {
@@ -106,8 +124,11 @@ export default function Team() {
             </tbody>
           </table>
         </div>
-        <Modal onClose={() => setModalOpen(false)} isVisible={modalOpen}>
-          <form onSubmit={(e) => onSubmit(e)} className="p-10">
+        <Modal onClose={() => {
+          setImg(null)
+          setNama("")
+          setModalOpen(false)}} isVisible={modalOpen}>
+          <form onSubmit={(e) => onSubmit(e)} className="p-10" >
             <div className="mb-6">
               <label
                 class="block text-gray-700 text-sm font-bold mb-2"
@@ -137,11 +158,12 @@ export default function Team() {
                 id="file"
                 required
                 accept="image/png, image/jpg, image/jpeg"
-                value={logo}
+
                 onChange={(e) => {
-                  setLogo(e.target.files[0]);
+                  setImg(e.target.files[0])
                   console.log(e.target.files);
                   console.log(e.target.files[0]);
+                  console.log(img);
                 }}
               />
             </div>
