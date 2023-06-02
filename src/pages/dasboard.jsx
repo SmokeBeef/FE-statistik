@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "../components/Navbar";
 import axios from "../utils/axios";
 import { MdSwapVert } from "react-icons/md";
+import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
 import Background from "../components/background";
 import swal from "sweetalert";
 import Modal from "../components/Modal";
@@ -9,14 +10,14 @@ import Modal from "../components/Modal";
 export default function Dasboard() {
   const [countdown, setCountdown] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
-  const [injuryTime, setInjuryTime] = useState(0)
-  const [openModal, setOpenModal] = useState(false)
-  const [change, setChange] = useState("")
-  const [indexChange, setIndexChange] = useState("")
+  const [injuryTime, setInjuryTime] = useState(0);
+  const [openModal, setOpenModal] = useState(false);
+  const [change, setChange] = useState("");
+  const [indexChange, setIndexChange] = useState("");
   // Form match
   const [homeTeam, setHomeTeam] = useState();
   const [awayTeam, setAwayTeam] = useState();
-  const [matchId, setMatchId] = useState()
+  const [matchId, setMatchId] = useState();
 
   // Data hasil fetch
   const [team, setTeam] = useState([]);
@@ -28,7 +29,29 @@ export default function Dasboard() {
   const [scoreHome, setScoreHome] = useState(0)
   const [scoreAway, setScoreAway] = useState(0)
 
-  // Countdown
+  const [team1Possession, setTeam1Possession] = useState(0);
+  const [team2Possession, setTeam2Possession] = useState(0);
+  const [isTeam1Running, setIsTeam1Running] = useState(false);
+  const [isTeam2Running, setIsTeam2Running] = useState(false);
+
+  const handlePause = () => {
+    setIsRunning(false);
+    setIsTeam1Running(false);
+    setIsTeam2Running(false);
+  };
+
+  const handleTeam1Possession = () => {
+    if (!isRunning) return;
+    setIsTeam1Running((prev) => !prev);
+    setIsTeam2Running(false);
+  };
+
+  const handleTeam2Possession = () => {
+    if (!isRunning) return;
+    setIsTeam2Running((prev) => !prev);
+    setIsTeam1Running(false);
+  };
+
   useEffect(() => {
     let timer = null;
 
@@ -43,40 +66,24 @@ export default function Dasboard() {
     };
   }, [isRunning]);
 
-  const handlePause = () => {
-    setIsRunning(false);
-  };
-
-  const handleReset = () => {
-    setCountdown(0);
-    setIsRunning(false);
-  };
-
   const minutes = Math.floor(countdown / 60);
   const seconds = countdown % 60;
-  // -------
-
-  // Fetching
 
   const getTeam = async () => {
     const res = await axios.get("team");
     setTeam(res.data.data);
   };
 
-  // -------
-
-  // Button
-
   const switchPlayerHome = (index) => {
-    setIndexChange(index)
-    setChange("home")
-    setOpenModal(true)
-  }
+    setIndexChange(index);
+    setChange("home");
+    setOpenModal(true);
+  };
   const switchPlayerAway = (index) => {
-    setIndexChange(index)
-    setChange("away")
-    setOpenModal(true)
-  }
+    setIndexChange(index);
+    setChange("away");
+    setOpenModal(true);
+  };
 
   const yellowCard = async (player, name) => {
     const data = {
@@ -167,30 +174,27 @@ export default function Dasboard() {
   }
 
   const onPLayMatch = async () => {
-    setIsRunning(true)
+    setIsRunning(true);
     if (!matchId) {
-      await axios.post("match/add", {
-        homeTeam: homeTeam,
-        awayTeam: awayTeam
-      })
-        .then(res => {
-          setMatchId(res.data.data.id)
+      await axios
+        .post("match/add", {
+          homeTeam: homeTeam,
+          awayTeam: awayTeam,
         })
-        .catch(err => {
-          setCountdown(0)
-          setIsRunning(false)
+        .then((res) => {
+          setMatchId(res.data.data.id);
+        })
+        .catch((err) => {
+          setCountdown(0);
+          setIsRunning(false);
           console.log(err);
           swal({
             title: err.response.data.msg,
-            icon: "warning"
-          })
-        })
+            icon: "warning",
+          });
+        });
     }
-  }
-
-  // ------
-
-  // onChangeHandle
+  };
 
   const onChangeHandleHome = async (e, data) => {
     setHomeTeam(data);
@@ -199,11 +203,13 @@ export default function Dasboard() {
       const res = await axios.get("player/id/" + data + "/" + "main");
       setPlayerHome(res.data.data);
       console.log(data);
-      const resCadangan = await axios.get("player/id/" + data + "/" + "cadangan");
-      setPlayerHomeCadangan(resCadangan.data.data)
+      const resCadangan = await axios.get(
+        "player/id/" + data + "/" + "cadangan"
+      );
+      setPlayerHomeCadangan(resCadangan.data.data);
     } else {
       setPlayerHome([]);
-      setPlayerHomeCadangan([])
+      setPlayerHomeCadangan([]);
     }
   };
   const onChangeHandleAway = async (e, data) => {
@@ -212,14 +218,16 @@ export default function Dasboard() {
       const res = await axios.get("player/id/" + data + "/" + "main");
       setPlayerAway(res.data.data);
       console.log(data);
-      const resCadangan = await axios.get("player/id/" + data + "/" + "cadangan");
-      setPlayerAwayCadangan(resCadangan.data.data)
+      const resCadangan = await axios.get(
+        "player/id/" + data + "/" + "cadangan"
+      );
+      setPlayerAwayCadangan(resCadangan.data.data);
     } else {
       setPlayerAway([]);
-      setPlayerAwayCadangan([])
+      setPlayerAwayCadangan([]);
     }
   };
-
+  
   // --------------
 
   // UseEffect
@@ -231,15 +239,47 @@ export default function Dasboard() {
   }, []);
 
   useEffect(() => {
-    if (countdown === 2700 + injuryTime) {
+    if (countdown === 2700) {
       setIsRunning(false);
-      setInjuryTime(0)
+      swal({
+        title: "Time is Over",
+        icon: "warning",
+      });
     }
     if (countdown === 5400 + injuryTime) {
       setIsRunning(false);
-      setInjuryTime(0)
+      setInjuryTime(0);
+      swal({
+        title: "Time is Over",
+        icon: "warning",
+      });
     }
   }, [countdown]);
+
+  useEffect(() => {
+    let intervalId;
+
+    if (isRunning) {
+      intervalId = setInterval(() => {
+        if (isTeam1Running) {
+          setTeam1Possession((prevPossession) => prevPossession + 1);
+        }
+
+        if (isTeam2Running) {
+          setTeam2Possession((prevPossession) => prevPossession + 1);
+        }
+      }, 1000);
+    }
+
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [isRunning, isTeam1Running, isTeam2Running]);
+
+
+  console.log(team1Possession);
+  console.log(team2Possession);
+
   return (
     <div className="font-Poppins">
       <Navbar />
@@ -277,36 +317,57 @@ export default function Dasboard() {
           </div>
           <div className="w-1/3 flex flex-col items-center bg-slate-200">
             <div className="flex justify-center">
-              <div className="w-72 py-5 text-center">
+              <div className="w-full py-5 text-center">
                 <h1 className="text-2xl font-semibold">Time</h1>
                 <h2 className="text-3xl my-5 font-bold">
                   {minutes}:{seconds < 10 ? `0${seconds}` : seconds}
                 </h2>
-                {!isRunning ? (
-                  <button
-                    className="bg-green-600 p-2 w-20 mr-5 hover:bg-green-700 transition-colors rounded-lg text-slate-50"
-                    onClick={onPLayMatch}
-                  >
-                    Start
+                <div className="flex justify-center w-full ">
+                  {!isTeam1Running ? (
+                    <button className="p-2 rounded-lg bg-blue-600 hover:bg-blue-800 text-slate-100 flex items-center"
+                    onClick={handleTeam1Possession}>
+                      <IoIosArrowBack className="mr-2" /> Posession
+                    </button>
+                  ) : (
+                    <button className="p-2 rounded-lg bg-blue-800 hover::bg-blue-600 text-slate-100 flex items-center"
+                    onClick={handleTeam1Possession}>
+                      <IoIosArrowBack className="mr-2" /> Posession
+                    </button>
+                  )}
+                  {!isRunning ? (
+                    <button
+                      className="bg-green-600 hover:bg-green-700 p-2 w-20 mx-3 rounded-lg text-slate-50"
+                      onClick={onPLayMatch}
+                    >
+                      Start
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-yellow-500 hover:bg-yellow-700 w-20 p-2 rounded-lg text-slate-100"
+                      onClick={handlePause}
+                    >
+                      Pause
+                    </button>
+                  )}
+                  <button className="p-2 rounded-lg w-20 bg-red-600 mr-3 hover:bg-red-700 text-slate-100">
+                    Reset
                   </button>
-                ) : (
-                  <button
-                    className="bg-yellow-600 mr-5 text-slate-100 hover:bg-yellow-700 p-2 w-20 rounded-lg"
-                    onClick={handlePause}
-                  >
-                    Pause
-                  </button>
-                )}
-
-                <button
-                  className="p-2 rounded-lg w-20 hover:bg-red-700 bg-red-600 mt-4 text-slate-100"
-                  onClick={handleReset}
-                >
-                  Reset
-                </button>
+                  {!isTeam2Running ? (
+                    <button className="p-2 rounded-lg bg-blue-600 hover:bg-blue-800 text-slate-100 flex items-center"
+                    onClick={handleTeam2Possession}>
+                      Posession <IoIosArrowForward className="mr-2" />
+                    </button>
+                  ) : (
+                    <button className="p-2 rounded-lg bg-blue-800 hover::bg-blue-600 text-slate-100 flex items-center"
+                    onClick={handleTeam2Possession}>
+                      Posession <IoIosArrowForward className="mr-2" />
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           </div>
+
           <div className="w-1/3">
             <div className="flex flex-rows justify-center ">
               <label
@@ -340,8 +401,6 @@ export default function Dasboard() {
         <div className="flex justify-between">
           <div className="team w-1/3 mt-10 ">
             {playerHome.map((data, index) => (
-
-
               <div key={data.numberJersey} className="flex">
                 <button
                   onClick={() => goalButton(data.id, data.team_id)}
@@ -365,21 +424,24 @@ export default function Dasboard() {
                     className="w-10 h-14 bg-red-600 rounded"></button>
                 </div>
                 <div className="flex items-center justify-center ml-5">
-                  <button onClick={() => switchPlayerHome(index)} className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                  <button
+                    onClick={() => switchPlayerHome(index)}
+                    className="text-slate-500 hover:text-slate-800 transition-colors text-4xl"
+                  >
                     <MdSwapVert className="text-white" />
                   </button>
                 </div>
-
               </div>
-
             ))}
           </div>
           <div className="team w-1/3 mt-10">
             {playerAway.map((data, index) => (
-
               <div key={data.numberJersey} className="flex">
                 <div className="flex items-center justify-center mr-5">
-                  <button onClick={() => switchPlayerAway(index)} className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
+                  <button
+                    onClick={() => switchPlayerAway(index)}
+                    className="text-slate-500 hover:text-slate-800 transition-colors text-4xl"
+                  >
                     <MdSwapVert className="text-white" />
                   </button>
                 </div>
@@ -410,14 +472,16 @@ export default function Dasboard() {
         </div>
 
         <div className="">
-          {(playerAway[0] || playerHome[0]) ? (
-            <h1 className="text-slate-100 font-semibold text-3xl text-center bg-slate-800">Pemain Pengganti</h1>
-          ) : ""}
+          {playerAway[0] || playerHome[0] ? (
+            <h1 className="text-slate-100 font-semibold text-3xl text-center bg-slate-800">
+              Pemain Pengganti
+            </h1>
+          ) : (
+            ""
+          )}
           <div className="flex justify-between">
             <div className="team w-1/3 mt-10 ">
               {playerHomeCadangan.map((data) => (
-
-
                 <div key={data.numberJersey} className="flex">
                   <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                     {data.numberJersey}
@@ -439,9 +503,7 @@ export default function Dasboard() {
                       <MdSwapVert className="text-white" />
                     </button>
                   </div>
-
                 </div>
-
               ))}
             </div>
             <div className=" w-1/3 mt-10">
@@ -473,14 +535,11 @@ export default function Dasboard() {
           </div>
         </div>
 
-
-
         <Modal isVisible={openModal} onClose={() => setOpenModal(false)}>
           <h1 className="text-center text-3xl">Pemain Cadangan</h1>
-          {(change === "home") ? (
+          {change === "home" ? (
             <div className="p-10 flex justify-center flex-col gap-y-5">
               {playerHomeCadangan.map((data) => (
-
                 <div key={data.numberJersey} className="flex justify-center">
                   <h2 className="text-slate-100 py-2 px-3 rounded z-[2] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                     {data.numberJersey}
@@ -497,16 +556,13 @@ export default function Dasboard() {
                       <MdSwapVert className="text-slate-800" />
                     </button>
                   </div>
-
                 </div>
-
               ))}
             </div>
           ) : (
             <div className="">
               <div className="p-10 flex justify-center flex-col gap-y-5">
                 {playerAwayCadangan.map((data) => (
-
                   <div key={data.numberJersey} className="flex justify-center">
                     <h2 className="text-slate-100 py-2 px-3 rounded z-[2] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                       {data.numberJersey}
@@ -523,9 +579,7 @@ export default function Dasboard() {
                         <MdSwapVert className="text-slate-800" />
                       </button>
                     </div>
-
                   </div>
-
                 ))}
               </div>
             </div>
