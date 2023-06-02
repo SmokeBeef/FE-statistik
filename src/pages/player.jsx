@@ -12,6 +12,7 @@ import {
   View,
   Document,
   StyleSheet,
+  Image,
 } from "@react-pdf/renderer";
 
 export default function Player() {
@@ -97,6 +98,7 @@ export default function Player() {
     page: {
       flexDirection: "row",
       backgroundColor: "#ffffff",
+      justifyContent: "space-between", // Add this line to align the date and images
     },
     section: {
       margin: 10,
@@ -105,6 +107,7 @@ export default function Player() {
     },
     table: {
       marginBottom: 10,
+      marginTop:30,
       fontFamily: "Helvetica",
       fontSize: 10,
       width: "100%",
@@ -113,7 +116,7 @@ export default function Player() {
       backgroundColor: "#f0f0f0",
       fontWeight: "bold",
       width: "100%",
-      padding:5,
+      padding: 5,
     },
     tableRow: {
       borderBottomWidth: 1,
@@ -122,17 +125,47 @@ export default function Player() {
     },
     tableCell: {
       paddingHorizontal: 25,
-      paddingVertical:5,
+      paddingVertical: 5,
       color: "#000000",
-      textAlign:"center",
-      width:"100%",
-      alignSelf:"center",
-      
+      textAlign: "center",
+      width: "100%",
+      alignSelf: "center",
     },
     tableHeaderText: {
-      fontSize: "10px",
-      fontWeight: 700,
+      fontSize: 10,
+      fontWeight: "bold",
       textAlign: "center",
+    },
+    imageContainer: {
+      width: 75,
+      height: 75,
+      margin: 5,
+      alignSelf: "center", // Align the images vertically centered
+      marginHorizontal:30,
+    },
+    image: {
+      objectFit: "contain",
+      width: "100%",
+      height: "100%",
+    },
+    scoreContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 10,
+    },
+    scoreText: {
+      fontSize: 16,
+      fontWeight: "bold",
+      marginHorizontal: 10,
+    },
+    dateContainer: {
+      alignSelf: "center",
+      marginBottom: 10,
+    },
+    dateText: {
+      fontSize: 14,
+      fontWeight: "bold",
     },
   });
 
@@ -140,49 +173,63 @@ export default function Player() {
     <Document>
       <Page size="A4">
         <View style={styles.section}>
-          <View style={styles.table}>
-            <View style={styles.tableRow}>
-              <View style={{ ...styles.tableHeader }}>
-                <Text style={styles.tableHeaderText}>No</Text>
-              </View>
-              <View style={{ ...styles.tableHeader }}>
-                <Text style={styles.tableHeaderText}>Nama</Text>
-              </View>
-              <View style={{ ...styles.tableHeader }}>
-                <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
-              </View>
-              <View style={{ ...styles.tableHeader }}>
-                <Text style={styles.tableHeaderText}>Posisi</Text>
-              </View>
-              <View style={{ ...styles.tableHeader }}>
-                <Text style={styles.tableHeaderText}>Team</Text>
-              </View>
+          {/* Date */}
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateText}>Tanggal Permainan</Text>
+          </View>
+
+          <View style={styles.page}>
+            {/* Image 1 */}
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                src={`${process.env.PUBLIC_URL}/profile.png`}
+              />
             </View>
+
+            {/* Score */}
+            <View style={styles.scoreContainer}>
+              <Text style={styles.scoreText}>Score</Text>
+              <Text style={styles.scoreText}>-</Text>
+              <Text style={styles.scoreText}>Score</Text>
+            </View>
+
+            {/* Image 2 */}
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                src={`${process.env.PUBLIC_URL}/profile.png`}
+              />
+            </View>
+          </View>
+
+          {/* Table */}
+          <View style={styles.table}>
             {player.map((data, index) => (
-              <View style={styles.tableRow} key={index}>
-                <View style={styles.tableCell}>
-                  <Text>{index + 1}</Text>
+              <View style={styles.tableRow} key={index}>              
+                  <View style={styles.tableCell}>
+                    <Text>{index + 1}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.name}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.numberJersey}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.position}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.team.name}</Text>
+                  </View>
                 </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.name}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.numberJersey}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.position}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.team.name}</Text>
-                </View>
-              </View>
             ))}
           </View>
         </View>
       </Page>
     </Document>
   );
-  
+
   return (
     <div className="">
       <Navbar />
