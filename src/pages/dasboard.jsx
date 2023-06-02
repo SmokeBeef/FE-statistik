@@ -26,6 +26,8 @@ export default function Dasboard() {
   const [playerHomeCadangan, setPlayerHomeCadangan] = useState([]);
   const [playerAway, setPlayerAway] = useState([]);
   const [playerAwayCadangan, setPlayerAwayCadangan] = useState([]);
+  const [scoreHome, setScoreHome] = useState(0)
+  const [scoreAway, setScoreAway] = useState(0)
 
   const [team1Possession, setTeam1Possession] = useState(0);
   const [team2Possession, setTeam2Possession] = useState(0);
@@ -83,6 +85,94 @@ export default function Dasboard() {
     setOpenModal(true);
   };
 
+  const yellowCard = async (player, name) => {
+    const data = {
+      match_id: matchId,
+      player_id: player,
+      card_type: "yellow",
+      card_time: minutes
+    }
+    await axios.post("card/add", data)
+      .then(res => {
+        if (res.status === 201)
+          swal({
+            title: `Player ${name} diberi kartu kuning`,
+            icon: "warning"
+          })
+      })
+      .catch()
+  }
+  const redCard = async (player, name) => {
+    const data = {
+      match_id: matchId,
+      player_id: player,
+      card_type: "red",
+      card_time: minutes
+    }
+    await axios.post("card/add", data)
+      .then(res => {
+        if (res.status === 201)
+          swal({
+            title: `Player ${name} diberi kartu Merah`,
+            icon: "warning"
+          })
+      })
+      .catch()
+  }
+
+  const goalButton = async (player, team) => {
+    await axios.post("goal/add", {
+      match_id: matchId,
+      player_id: player,
+      goal_time: minutes
+    })
+      .then(async (res) => {
+        if (res.status === 201)
+          swal({
+            title: "horeeee goal",
+            icon: "success"
+          })
+        await axios.get(`goal/${matchId}/${team}`)
+          .then(res => {
+            setScoreHome(res.data.data)
+          })
+          .catch
+
+      })
+      .catch(err => {
+        swal({
+          title: "cant add goal",
+          icon: "warning"
+        })
+      })
+  }
+  const goalButtonAway = async (player, team) => {
+    await axios.post("goal/add", {
+      match_id: matchId,
+      player_id: player,
+      goal_time: minutes
+    })
+      .then(async (res) => {
+        if (res.status === 201)
+          swal({
+            title: "horeeee goal",
+            icon: "success"
+          })
+        await axios.get(`goal/${matchId}/${team}`)
+          .then(res => {
+            setScoreAway(res.data.data)
+          })
+          .catch()
+
+      })
+      .catch(err => {
+        swal({
+          title: "cant add goal",
+          icon: "warning"
+        })
+      })
+  }
+
   const onPLayMatch = async () => {
     setIsRunning(true);
     if (!matchId) {
@@ -137,6 +227,12 @@ export default function Dasboard() {
       setPlayerAwayCadangan([]);
     }
   };
+  
+  // --------------
+
+  // UseEffect
+
+
 
   useEffect(() => {
     getTeam();
@@ -214,7 +310,9 @@ export default function Dasboard() {
               </select>
             </div>
             <div className="flex justify-center">
-              <h3 className="text-6xl text-white font-bold pt-10">0</h3>
+              <h3 className="text-6xl text-white font-bold pt-10">
+                {scoreHome}
+              </h3>
             </div>
           </div>
           <div className="w-1/3 flex flex-col items-center bg-slate-200">
@@ -294,7 +392,9 @@ export default function Dasboard() {
               </select>
             </div>
             <div className="flex justify-center">
-              <h3 className="text-6xl text-white font-bold pt-10">0</h3>
+              <h3 className="text-6xl text-white font-bold pt-10">
+                {scoreAway}
+              </h3>
             </div>
           </div>
         </div>
@@ -302,7 +402,9 @@ export default function Dasboard() {
           <div className="team w-1/3 mt-10 ">
             {playerHome.map((data, index) => (
               <div key={data.numberJersey} className="flex">
-                <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                <button
+                  onClick={() => goalButton(data.id, data.team_id)}
+                  className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                   {data.numberJersey}
                 </button>
                 <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-r-xl -ml-4 h-14 pl-8 w-56 capitalize">
@@ -316,6 +418,14 @@ export default function Dasboard() {
                 </div>
                 <div className="ml-5">
                   <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
+                  <button
+                    onClick={() => yellowCard(data.id, data.name)}
+                    className="w-10 h-14 bg-yellow-300 rounded"></button>
+                </div>
+                <div className="ml-5">
+                  <button
+                    onClick={() => redCard(data.id, data.name)}
+                    className="w-10 h-14 bg-red-600 rounded"></button>
                 </div>
                 <div className="flex items-center justify-center ml-5">
                   <button
@@ -344,6 +454,14 @@ export default function Dasboard() {
                 </div>
                 <div className="mr-5">
                   <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
+                  <button
+                    onClick={() => redCard(data.id, data.name)}
+                    className="w-10 h-14 bg-red-600 rounded"></button>
+                </div>
+                <div className="mr-5">
+                  <button
+                    onClick={() => yellowCard(data.id, data.name)}
+                    className="w-10 h-14 bg-yellow-300 rounded"></button>
                 </div>
                 <h3 className="w-[4.5rem] -mr-4 pr-4 -z-[1] h-14 flex items-center justify-center text-slate-100 bg-slate-600 rounded">
                   {data.position}
@@ -351,7 +469,9 @@ export default function Dasboard() {
                 <h3 className="flex items-center bg-slate-700 text-slate-100 rounded-l-xl justify-end pr-8 -mr-4 h-14 px-4 w-56 capitalize">
                   {data.name}
                 </h3>
-                <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
+                <button
+                  onClick={() => goalButtonAway(data.id, data.team_id)}
+                  className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                   {data.numberJersey}
                 </button>
               </div>

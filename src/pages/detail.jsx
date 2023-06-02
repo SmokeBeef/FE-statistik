@@ -1,4 +1,4 @@
-import React, { useRef} from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
 import Background from "../components/background";
 import { useDownloadExcel } from "react-export-table-to-excel";
@@ -10,6 +10,7 @@ import {
   Document,
   StyleSheet,
 } from "@react-pdf/renderer";
+import axios from "../utils/axios"
 
 export default function Detail() {
   const tableRef = useRef(null);
@@ -19,6 +20,8 @@ export default function Detail() {
     .toLocaleDateString("en-GB", options)
     .replace(/\//g, "-");
 
+  const [dataMatch, setDataMatch] = useState([])
+  const [data, setData] = useState()
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -92,6 +95,28 @@ export default function Detail() {
     </Document>
   );
 
+
+  const onChangeHandle = async (id) => {
+    await axios.get("match/"+id)
+    .then(res => {
+      console.log(res.data);
+      setData(res.data.data)
+    })
+    .catch(err => {
+
+    })
+  }
+  const getMatch = async () => {
+    await axios.get("match")
+      .then(res => {
+        setDataMatch(res.data.data)
+      })
+      .catch(err => { })
+  }
+  useEffect(() => {
+    getMatch()
+  }, [])
+
   return (
     <div>
       <Navbar />
@@ -121,11 +146,23 @@ export default function Detail() {
               Detail Pertandingan
             </label>
             <select
+            onChange={(e) => onChangeHandle(e.target.value)}
               name=""
               id="match"
               className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value="">---Pilih Pertandingan---</option>
+              {dataMatch.map(data => (
+                <option className="text-center"  value={data.id}>
+                  <span>
+                    {data.home_team.name}------
+                  </span>
+                  <span>
+                    {data.away_team.name}
+                  </span>
+                </option>
+
+              ))}
             </select>
           </div>
         </form>
@@ -199,6 +236,28 @@ export default function Detail() {
                     Team
                   </td>
                 </tr>
+              <tr>
+                <td className="p-2 border border-slate-300">1</td>
+                <td className="p-2 border border-slate-300">Nama</td>
+                <td className="p-2 border border-slate-300">
+                  Nomor J
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Posisi
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
