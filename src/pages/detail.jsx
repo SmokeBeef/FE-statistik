@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef} from "react";
 import Navbar from "../components/Navbar";
 import Background from "../components/background";
 import { useDownloadExcel } from "react-export-table-to-excel";
@@ -214,6 +214,47 @@ export default function Detail() {
               <span>3%</span>
             </div>
           </div>
+        </div>
+        <div className="flex justify-center my-10">
+          <table
+            className="bg-white mt-5 border border-slate-400 w-[90%]"
+            ref={tableRef}
+          >
+            <thead className="text-lg">
+              <th className="p-2 border border-slate-300">No</th>
+              <th className="p-2 border border-slate-300">Nama</th>
+              <th className="p-2 border border-slate-300">Nomor Jersey</th>
+              <th className="p-2 border border-slate-300">Posisi</th>
+              <th className="p-2 border border-slate-300">Team</th>
+              <th className="p-2 border border-slate-300">Kartu Merah</th>
+              <th className="p-2 border border-slate-300">Kartu Kuning</th>
+              <th className="p-2 border border-slate-300">Foul</th>
+            </thead>
+            <tbody className="text-center">
+                <tr>
+                  <td className="p-2 border border-slate-300">1</td>
+                  <td className="p-2 border border-slate-300">Nama</td>
+                  <td className="p-2 border border-slate-300">
+                    Nomor J 
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                   Posisi 
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    Team
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    Team
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    Team
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    Team
+                  </td>
+                </tr>
+            </tbody>
+          </table>
         </div>
       </main>
     </div>
