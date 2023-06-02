@@ -64,31 +64,57 @@ export default function Detail() {
     <Document>
       <Page size="A4">
         <View style={styles.section}>
+          {/* Date */}
+          <View style={styles.dateContainer}>
+            <Text style={styles.dateText}>Tanggal Permainan</Text>
+          </View>
+
+          <View style={styles.page}>
+            {/* Image 1 */}
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                src={`${process.env.PUBLIC_URL}/profile.png`}
+              />
+            </View>
+
+            {/* Score */}
+            <View style={styles.scoreContainer}>
+              <Text style={styles.scoreText}>Score</Text>
+              <Text style={styles.scoreText}>-</Text>
+              <Text style={styles.scoreText}>Score</Text>
+            </View>
+
+            {/* Image 2 */}
+            <View style={styles.imageContainer}>
+              <Image
+                style={styles.image}
+                src={`${process.env.PUBLIC_URL}/profile.png`}
+              />
+            </View>
+          </View>
+
+          {/* Table */}
           <View style={styles.table}>
-            <View style={styles.tableRow}>
-              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
-                <Text style={styles.tableHeaderText}>Nama</Text>
-              </View>
-              <View style={{ ...styles.tableCell, ...styles.tableHeader }}>
-                <Text style={styles.tableHeaderText}>Email</Text>
-              </View>
-            </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text>John Doe</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>john.doe@example.com</Text>
-              </View>
-            </View>
-            <View style={styles.tableRow}>
-              <View style={styles.tableCell}>
-                <Text>Jane Smith</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>jane.smith@example.com</Text>
-              </View>
-            </View>
+            {player.map((data, index) => (
+              <View style={styles.tableRow} key={index}>              
+                  <View style={styles.tableCell}>
+                    <Text>{index + 1}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.name}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.numberJersey}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.position}</Text>
+                  </View>
+                  <View style={styles.tableCell}>
+                    <Text>{data.team.name}</Text>
+                  </View>
+                </View>
+            ))}
           </View>
         </View>
       </Page>
