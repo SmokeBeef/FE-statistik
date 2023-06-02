@@ -266,7 +266,7 @@ export default function Player() {
         </button>
         <div className="flex justify-center">
           <table
-            className="bg-slate-200 mt-5 border border-slate-400 w-[90%]"
+            className="bg-white mt-5 border border-slate-400 w-[90%]"
             ref={tableRef}
           >
             <thead className="text-lg">
