@@ -86,15 +86,17 @@ export default function Detail() {
     </Document>
   );
   const today = new Date();
-  const options = { year: 'numeric', month: '2-digit', day: '2-digit' };
-  const formattedDate = today.toLocaleDateString('en-GB', options).replace(/\//g, '-');
-  
+  const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+  const formattedDate = today
+    .toLocaleDateString("en-GB", options)
+    .replace(/\//g, "-");
+
   return (
     <div>
       <Navbar />
       <Background />
       <main className="font-Poppins">
-        <form action="" className="mt-10 text-center">
+        <form action="" className="mt-8 text-center">
           <div className="">
             <label
               htmlFor="match"
@@ -111,36 +113,108 @@ export default function Detail() {
             </select>
           </div>
         </form>
-        <table style={styles.table}>
-          <thead>
-            <tr style={styles.tableRow}>
-              <th style={{ ...styles.tableCell, ...styles.tableHeader }}>
-                Nama
-              </th>
-              <th style={{ ...styles.tableCell, ...styles.tableHeader }}>
-                Email
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr style={styles.tableRow}>
-              <td style={styles.tableCell}>John Doe</td>
-              <td style={styles.tableCell}>john.doe@example.com</td>
-            </tr>
-            <tr style={styles.tableRow}>
-              <td style={styles.tableCell}>Jane Smith</td>
-              <td style={styles.tableCell}>jane.smith@example.com</td>
-            </tr>
-          </tbody>
-        </table>
-        <PDFDownloadLink
-          document={<MyDoc />}
-          fileName={`Play-${formattedDate}.pdf`}
-        >
-          {({ blob, url, loading, error }) =>
-            loading ? "Loading document..." : "Download PDF"
-          }
-        </PDFDownloadLink>
+
+        <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
+          <div className="flex justify-between bg-gray-200 text-gray-700 py-2 px-2">
+            <div className="w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+              <span>Team A</span>
+            </div>
+            <div className="w-1/3 text-center text-5xl font-extrabold">
+              <span>0 - 0</span>
+            </div>
+            <div className="w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+              <span>Team B</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Shots</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Shots On Target</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Foul</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Yellow Card</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Red Card</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Offsides</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Corners</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3</span>
+            </div>
+          </div>
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>1%</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Possession</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>3%</span>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
   );
