@@ -12,9 +12,8 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import axios from "../utils/axios";
-import { AiTwotoneIdcard } from 'react-icons/ai';
-import { IconContext } from 'react-icons';
-
+import { AiTwotoneIdcard } from "react-icons/ai";
+import { IconContext } from "react-icons";
 
 export default function Detail() {
   const tableRef = useRef(null);
@@ -52,7 +51,7 @@ export default function Detail() {
     },
     table: {
       marginBottom: 10,
-      marginTop:30,
+      marginTop: 30,
       fontFamily: "Helvetica",
       fontSize: 10,
       width: "100%",
@@ -86,7 +85,7 @@ export default function Detail() {
       height: 75,
       margin: 5,
       alignSelf: "center", // Align the images vertically centered
-      marginHorizontal:30,
+      marginHorizontal: 30,
     },
     image: {
       objectFit: "contain",
@@ -150,94 +149,105 @@ export default function Detail() {
             </View>
           </View>
 
-{/* Table */}
-<View style={styles.table}>
-          {/* Table Header */}
-          <View style={styles.tableRow}>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>No</Text>
+          {/* Table */}
+          <View style={styles.table}>
+            {/* Table Header */}
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>No</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Nama</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Posisi</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Team</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Kartu Merah</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Kartu Kuning</Text>
+              </View>
             </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Nama</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Posisi</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Team</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Kartu Merah</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Kartu Kuning</Text>
-            </View>
+
+            {/* Table Body */}
+            {player.map((data, index) => (
+              <View style={styles.tableRow} key={index}>
+                <View style={styles.tableCell}>
+                  <Text>{index + 1}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.numberJersey}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.position}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.team.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {
+                      data.cards.filter((card) => card.card_type === "red")
+                        .length
+                    }
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {
+                      data.cards.filter((card) => card.card_type === "yellow")
+                        .length
+                    }
+                  </Text>
+                </View>
+              </View>
+            ))}
+            {playerAway.map((data, index) => (
+              <View style={styles.tableRow} key={index}>
+                <View style={styles.tableCell}>
+                  <Text>{index + 1}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.numberJersey}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.position}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.team.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {
+                      data.cards.filter((card) => card.card_type === "red")
+                        .length
+                    }
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {
+                      data.cards.filter((card) => card.card_type === "yellow")
+                        .length
+                    }
+                  </Text>
+                </View>
+              </View>
+            ))}
           </View>
-
-          {/* Table Body */}
-          {player.map((data, index) => (
-            <View style={styles.tableRow} key={index}>
-              <View style={styles.tableCell}>
-                <Text>{index + 1}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.name}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.numberJersey}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.position}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.team.name}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "red").length}
-                </Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "yellow").length}
-                </Text>
-              </View>
-            </View>
-          ))}
-          {playerAway.map((data, index) => (
-            <View style={styles.tableRow} key={index}>
-              <View style={styles.tableCell}>
-                <Text>{index + 1}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.name}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.numberJersey}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.position}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.team.name}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "red").length}
-                </Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "yellow").length}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
-
         </View>
       </Page>
     </Document>
