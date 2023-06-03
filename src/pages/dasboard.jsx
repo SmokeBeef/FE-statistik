@@ -85,6 +85,21 @@ export default function Dasboard() {
     setOpenModal(true);
   };
 
+  const tambahanWaktu = () => {
+    if (matchId) {
+      setInjuryTime(prev => prev + 300)
+      swal({
+        title: "+5 menit",
+        icon: "success"
+      })
+    } else {
+      swal({
+        title: "permainan belum di mulai",
+        icon: "warning"
+      })
+    }
+  }
+
   const yellowCard = async (player, name) => {
     const data = {
       match_id: matchId,
@@ -227,7 +242,7 @@ export default function Dasboard() {
       setPlayerAwayCadangan([]);
     }
   };
-  
+
   // --------------
 
   // UseEffect
@@ -242,7 +257,7 @@ export default function Dasboard() {
     if (countdown === 2700) {
       setIsRunning(false);
       swal({
-        title: "Time is Over",
+        title: "Babak Pertama selesai",
         icon: "warning",
       });
     }
@@ -279,6 +294,7 @@ export default function Dasboard() {
 
   console.log(team1Possession);
   console.log(team2Possession);
+  console.log("injury time ",injuryTime);
 
   return (
     <div className="font-Poppins">
@@ -325,12 +341,12 @@ export default function Dasboard() {
                 <div className="flex justify-center w-full ">
                   {!isTeam1Running ? (
                     <button className="p-2 rounded-lg bg-blue-600 hover:bg-blue-800 text-slate-100 flex items-center"
-                    onClick={handleTeam1Possession}>
+                      onClick={handleTeam1Possession}>
                       <IoIosArrowBack className="mr-2" /> Posession
                     </button>
                   ) : (
                     <button className="p-2 rounded-lg bg-blue-800 hover::bg-blue-600 text-slate-100 flex items-center"
-                    onClick={handleTeam1Possession}>
+                      onClick={handleTeam1Possession}>
                       <IoIosArrowBack className="mr-2" /> Posession
                     </button>
                   )}
@@ -343,23 +359,25 @@ export default function Dasboard() {
                     </button>
                   ) : (
                     <button
-                      className="bg-yellow-500 hover:bg-yellow-700 w-20 p-2 rounded-lg text-slate-100"
+                      className="bg-yellow-500 hover:bg-yellow-700 w-20 p-2 mx-3 rounded-lg text-slate-100"
                       onClick={handlePause}
                     >
                       Pause
                     </button>
                   )}
-                  <button className="p-2 rounded-lg w-20 bg-red-600 mr-3 hover:bg-red-700 text-slate-100">
-                    Reset
+                  <button
+                    onClick={() => tambahanWaktu()}
+                    className="p-2 rounded-lg w-20 bg-red-600 mr-3 hover:bg-red-700 text-slate-100">
+                    5 menit
                   </button>
                   {!isTeam2Running ? (
                     <button className="p-2 rounded-lg bg-blue-600 hover:bg-blue-800 text-slate-100 flex items-center"
-                    onClick={handleTeam2Possession}>
+                      onClick={handleTeam2Possession}>
                       Posession <IoIosArrowForward className="mr-2" />
                     </button>
                   ) : (
                     <button className="p-2 rounded-lg bg-blue-800 hover::bg-blue-600 text-slate-100 flex items-center"
-                    onClick={handleTeam2Possession}>
+                      onClick={handleTeam2Possession}>
                       Posession <IoIosArrowForward className="mr-2" />
                     </button>
                   )}
@@ -413,6 +431,7 @@ export default function Dasboard() {
                 <h3 className="w-[4.5rem] -z-[1] h-14 flex -ml-4 pl-4 items-center justify-center text-slate-100 bg-slate-600 rounded">
                   {data.position}
                 </h3>
+
                 <div className="ml-5">
                   <button
                     onClick={() => yellowCard(data.id, data.name)}
@@ -445,6 +464,7 @@ export default function Dasboard() {
                     <MdSwapVert className="text-white" />
                   </button>
                 </div>
+
                 <div className="mr-5">
                   <button
                     onClick={() => redCard(data.id, data.name)}

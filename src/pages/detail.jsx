@@ -21,9 +21,9 @@ export default function Detail() {
     .toLocaleDateString("en-GB", options)
     .replace(/\//g, "-");
 
-  const [dataMatch, setDataMatch] = useState([]);
-  const [data, setData] = useState();
-  const [player, setPlayer] = useState([]);
+  const [dataMatch, setDataMatch] = useState([])
+  const [data, setData] = useState()
+  const [player, setPlayer] = useState([])
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -123,26 +123,28 @@ export default function Detail() {
     </Document>
   );
 
-  const onChangeHandle = async (id) => {
-    await axios
-      .get("match/" + id)
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data.data);
-        let data = [];
-        console.log(res.data.data.home_team.player);
-        res.data.data.home_team.player.map((player) => {
-          data.push(player);
-        });
-        res.data.data.away_team.player.map((player) => {
-          data.push(player);
-        });
 
-        console.log(data);
-        setPlayer(data);
+  const onChangeHandle = async (id) => {
+    await axios.get("match/"+id)
+    .then(res => {
+      console.log(res.data);
+      setData(res.data.data)
+      let data = []
+      console.log(res.data.data.home_team.player);
+      res.data.data.home_team.player.map(player => {
+        data.push(player)
       })
-      .catch((err) => {});
-  };
+      res.data.data.away_team.player.map(player => {
+        data.push(player)
+      })
+     
+      console.log(data);
+      setPlayer(data)
+    })
+    .catch(err => {
+
+    })
+  }
   const getMatch = async () => {
     await axios
       .get("match")
@@ -190,10 +192,14 @@ export default function Detail() {
               className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value="">---Pilih Pertandingan---</option>
-              {dataMatch.map((data) => (
-                <option className="text-center" value={data.id}>
-                  <span>{data.home_team.name}------</span>
-                  <span>{data.away_team.name}</span>
+              {dataMatch.map(data => (
+                <option className="text-center"  value={data.id}>
+                  <span>
+                    {data.home_team.name}------
+                  </span>
+                  <span>
+                    {data.away_team.name}
+                  </span>
                 </option>
               ))}
             </select>
@@ -235,29 +241,63 @@ export default function Detail() {
           </div>
         </div>
         <div className="flex justify-center my-10">
-          {player.map((data, index) => (
-            <table
-              className="bg-white mt-5 border border-slate-400 w-[90%]"
-              ref={tableRef}
-            >
-              <thead className="text-lg">
-                <th className="p-2 border border-slate-300">No</th>
-                <th className="p-2 border border-slate-300">Nama</th>
-                <th className="p-2 border border-slate-300">Nomor Jersey</th>
-                <th className="p-2 border border-slate-300">Posisi</th>
-                <th className="p-2 border border-slate-300">Team</th>
-              </thead>
-              <tbody className="text-center">
+          <table
+            className="bg-white mt-5 border border-slate-400 w-[90%]"
+            ref={tableRef}
+          >
+            <thead className="text-lg">
+              <th className="p-2 border border-slate-300">No</th>
+              <th className="p-2 border border-slate-300">Nama</th>
+              <th className="p-2 border border-slate-300">Nomor Jersey</th>
+              <th className="p-2 border border-slate-300">Posisi</th>
+              <th className="p-2 border border-slate-300">Team</th>
+              <th className="p-2 border border-slate-300">Kartu Merah</th>
+              <th className="p-2 border border-slate-300">Kartu Kuning</th>
+            </thead>
+            <tbody className="text-center">
                 <tr>
-                  <td className="p-2 border border-slate-300">{index+1}</td>
-                  <td className="p-2 border border-slate-300">{data.name}</td>
-                  <td className="p-2 border border-slate-300">{data.numberJersey}</td>
-                  <td className="p-2 border border-slate-300">{data.position}</td>
-                  <td className="p-2 border border-slate-300">{data.team.name}</td>
+                  <td className="p-2 border border-slate-300">1</td>
+                  <td className="p-2 border border-slate-300">Nama</td>
+                  <td className="p-2 border border-slate-300">
+                    Nomor J 
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                   Posisi 
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    Team
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    Team
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    Team
+                  </td>
                 </tr>
-              </tbody>
-            </table>
-          ))}
+              <tr>
+                <td className="p-2 border border-slate-300">1</td>
+                <td className="p-2 border border-slate-300">Nama</td>
+                <td className="p-2 border border-slate-300">
+                  Nomor J
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Posisi
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+                <td className="p-2 border border-slate-300">
+                  Team
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </main>
     </div>
