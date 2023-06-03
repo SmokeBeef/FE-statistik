@@ -126,6 +126,10 @@ export default function Detail() {
     </Document>
   );
 
+  const scoreTeam = async (idMatch, idTeam) => {
+    
+    await axios.get()
+  }
 
   const onChangeHandle = async (payload) => {
     const data = payload.split(" ")
@@ -141,6 +145,7 @@ export default function Detail() {
 
         console.log(data);
         setPlayer(data)
+
       })
       .catch(err => {
 
