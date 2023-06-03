@@ -9,9 +9,9 @@ import {
   View,
   Document,
   StyleSheet,
-  Image,
+  Image
 } from "@react-pdf/renderer";
-import axios from "../utils/axios";
+import axios from "../utils/axios"
 
 export default function Detail() {
   const tableRef = useRef(null);
@@ -24,6 +24,9 @@ export default function Detail() {
   const [dataMatch, setDataMatch] = useState([])
   const [data, setData] = useState()
   const [player, setPlayer] = useState([])
+  const [playerAway, setPlayerAway] = useState([])
+  const [goalHome, setGoalHome] = useState()
+  const [goalAway, setGoalAway] = useState()
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -124,38 +127,35 @@ export default function Detail() {
   );
 
 
-  const onChangeHandle = async (id) => {
-    await axios.get("match/"+id)
-    .then(res => {
-      console.log(res.data);
-      setData(res.data.data)
-      let data = []
-      console.log(res.data.data.home_team.player);
-      res.data.data.home_team.player.map(player => {
-        data.push(player)
-      })
-      res.data.data.away_team.player.map(player => {
-        data.push(player)
-      })
-     
-      console.log(data);
-      setPlayer(data)
-    })
-    .catch(err => {
+  const onChangeHandle = async (payload) => {
+    const data = payload.split(" ")
+    console.log(data);
+    await axios.get("match/" + data[0])
+      .then(res => {
+        console.log(res.data);
+        setData(res.data.data)
+        let data = res.data.data.home_team.player
+        console.log(res.data.data.home_team.player);
 
-    })
+        setPlayerAway(res.data.data.away_team.player)
+
+        console.log(data);
+        setPlayer(data)
+      })
+      .catch(err => {
+
+      })
   }
   const getMatch = async () => {
-    await axios
-      .get("match")
-      .then((res) => {
-        setDataMatch(res.data.data);
+    await axios.get("match")
+      .then(res => {
+        setDataMatch(res.data.data)
       })
-      .catch((err) => {});
-  };
+      .catch(err => { })
+  }
   useEffect(() => {
-    getMatch();
-  }, []);
+    getMatch()
+  }, [])
 
   return (
     <div>
@@ -193,7 +193,7 @@ export default function Detail() {
             >
               <option value="">---Pilih Pertandingan---</option>
               {dataMatch.map(data => (
-                <option className="text-center"  value={data.id}>
+                <option className="text-center" value={`${data.id} ${data.home_team.id} ${data.away_team.id}`}>
                   <span>
                     {data.home_team.name}------
                   </span>
@@ -201,10 +201,12 @@ export default function Detail() {
                     {data.away_team.name}
                   </span>
                 </option>
+
               ))}
             </select>
           </div>
         </form>
+
         <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
           <div className="flex justify-between bg-gray-200 text-gray-700 py-2 px-2">
             <div className="w-1/3 text-center text-2xl font-bold flex justify-center items-center">
@@ -255,47 +257,55 @@ export default function Detail() {
               <th className="p-2 border border-slate-300">Kartu Kuning</th>
             </thead>
             <tbody className="text-center">
+              {player.map((data, index) => (
                 <tr>
-                  <td className="p-2 border border-slate-300">1</td>
-                  <td className="p-2 border border-slate-300">Nama</td>
+                  <td className="p-2 border border-slate-300">{index + 1}</td>
+                  <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
-                    Nomor J 
+                    {data.numberJersey}
                   </td>
                   <td className="p-2 border border-slate-300">
-                   Posisi 
+                    {data.position}
                   </td>
                   <td className="p-2 border border-slate-300">
-                    Team
+                    {data.team.name}
                   </td>
                   <td className="p-2 border border-slate-300">
-                    Team
+                    {((data.cards).filter(card => card.card_type === "red")).length}
+
                   </td>
                   <td className="p-2 border border-slate-300">
-                    Team
+                    {((data.cards).filter(card => card.card_type === "yellow")).length}
+
                   </td>
                 </tr>
-              <tr>
-                <td className="p-2 border border-slate-300">1</td>
-                <td className="p-2 border border-slate-300">Nama</td>
-                <td className="p-2 border border-slate-300">
-                  Nomor J
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Posisi
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-              </tr>
+              ))}
+              {playerAway.map((data, index) => (
+
+
+                <tr>
+                  <td className="p-2 border border-slate-300">{index + 1}</td>
+                  <td className="p-2 border border-slate-300">{data.name}</td>
+                  <td className="p-2 border border-slate-300">
+                    {data.numberJersey}
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.position}
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.team.name}
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {((data.cards).filter(card => card.card_type === "red")).length}
+
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {((data.cards).filter(card => card.card_type === "yellow")).length}
+
+                  </td>
+
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
