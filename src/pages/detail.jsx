@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
+import { BsBoxArrowInUp, BsBoxArrowDown } from 'react-icons/bs'
+import { IoFootball } from "react-icons/io5"
 import Background from "../components/background";
 import { useDownloadExcel } from "react-export-table-to-excel";
 import {
@@ -25,7 +27,7 @@ export default function Detail() {
     .replace(/\//g, "-");
 
 
-
+  const [offside, setOffside] = useState([0, 0])
   const [dataMatch, setDataMatch] = useState([]);
   const [data, setData] = useState();
   const [player, setPlayer] = useState([]);
@@ -54,7 +56,7 @@ export default function Detail() {
     },
     table: {
       marginBottom: 10,
-      marginTop:30,
+      marginTop: 30,
       fontFamily: "Helvetica",
       fontSize: 10,
       width: "100%",
@@ -88,7 +90,7 @@ export default function Detail() {
       height: 75,
       margin: 5,
       alignSelf: "center", // Align the images vertically centered
-      marginHorizontal:30,
+      marginHorizontal: 30,
     },
     image: {
       objectFit: "contain",
@@ -152,93 +154,93 @@ export default function Detail() {
             </View>
           </View>
 
-{/* Table */}
-<View style={styles.table}>
-          {/* Table Header */}
-          <View style={styles.tableRow}>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>No</Text>
+          {/* Table */}
+          <View style={styles.table}>
+            {/* Table Header */}
+            <View style={styles.tableRow}>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>No</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Nama</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Posisi</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Team</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Kartu Merah</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Kartu Kuning</Text>
+              </View>
             </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Nama</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Posisi</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Team</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Kartu Merah</Text>
-            </View>
-            <View style={styles.tableCell}>
-              <Text style={styles.tableHeaderText}>Kartu Kuning</Text>
-            </View>
-          </View>
 
-          {/* Table Body */}
-          {player.map((data, index) => (
-            <View style={styles.tableRow} key={index}>
-              <View style={styles.tableCell}>
-                <Text>{index + 1}</Text>
+            {/* Table Body */}
+            {player.map((data, index) => (
+              <View style={styles.tableRow} key={index}>
+                <View style={styles.tableCell}>
+                  <Text>{index + 1}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.numberJersey}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.position}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.team.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {data.cards.filter((card) => card.card_type === "red").length}
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {data.cards.filter((card) => card.card_type === "yellow").length}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.tableCell}>
-                <Text>{data.name}</Text>
+            ))}
+            {playerAway.map((data, index) => (
+              <View style={styles.tableRow} key={index}>
+                <View style={styles.tableCell}>
+                  <Text>{index + 1}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.numberJersey}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.position}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.team.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {data.cards.filter((card) => card.card_type === "red").length}
+                  </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>
+                    {data.cards.filter((card) => card.card_type === "yellow").length}
+                  </Text>
+                </View>
               </View>
-              <View style={styles.tableCell}>
-                <Text>{data.numberJersey}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.position}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.team.name}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "red").length}
-                </Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "yellow").length}
-                </Text>
-              </View>
-            </View>
-          ))}
-          {playerAway.map((data, index) => (
-            <View style={styles.tableRow} key={index}>
-              <View style={styles.tableCell}>
-                <Text>{index + 1}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.name}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.numberJersey}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.position}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>{data.team.name}</Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "red").length}
-                </Text>
-              </View>
-              <View style={styles.tableCell}>
-                <Text>
-                  {data.cards.filter((card) => card.card_type === "yellow").length}
-                </Text>
-              </View>
-            </View>
-          ))}
-        </View>
+            ))}
+          </View>
 
         </View>
       </Page>
@@ -262,9 +264,11 @@ export default function Detail() {
       .catch()
   }
 
+
   const onChangeHandle = async (payload) => {
     const data = payload.split(" ");
     console.log(data);
+
     await axios
       .get("match/" + data[0])
       .then((res) => {
@@ -276,8 +280,20 @@ export default function Detail() {
 
         scoreTeamHome(data[0], data[1])
         scoreTeamAway(data[0], data[2])
+
+        axios.get("os/" + data[0] + "/" + data[1])
+          .then(res => setOffside(prev => {
+            prev[0] = res.data.data
+            return prev
+          }))
+
+        axios.get("os/" + data[0] + "/" + data[2])
+          .then(res => setOffside(prev => {
+            prev[1] = res.data.data
+            return prev
+          }))
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const getMatch = async () => {
     await axios.get("match").then((res) => {
@@ -292,7 +308,7 @@ export default function Detail() {
         setDataTeamHome(res.data.data);
         setDataTeamAway(res.data.data);
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
 
   useEffect(() => {
@@ -367,26 +383,27 @@ export default function Detail() {
               <span>{data ? data.away_team.name : "team kanan"}</span>
             </div>
           </div>
+
           <div className="flex justify-between py-3 px-2">
             <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
+              <span>{offside[0]}</span>
             </div>
             <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Yellow Card</span>
+              <span>Off side</span>
             </div>
             <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
+              <span>{offside[1]}</span>
             </div>
           </div>
           <div className="flex justify-between py-3 px-2">
             <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
+              <span>{data ? (data.ballPossession[0] ? Math.round(data.ballPossession[0].possession_time) + "%" : "0") : "0"}</span>
             </div>
             <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Red Card</span>
+              <span>Ball Possession</span>
             </div>
             <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
+              <span>{data ? (data.ballPossession[1] ? Math.round(data.ballPossession[1].possession_time) + "%" : "0") : "0"}</span>
             </div>
           </div>
         </div>
@@ -403,6 +420,7 @@ export default function Detail() {
               <th className="p-2 border border-slate-300">Team</th>
               <th className="p-2 border border-slate-300">Kartu Merah</th>
               <th className="p-2 border border-slate-300">Kartu Kuning</th>
+              <th className="p-2 border border-slate-300">Status</th>
             </thead>
             <tbody className="text-center">
               {player.map((data, index) => (
@@ -411,6 +429,15 @@ export default function Detail() {
                   <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
                     {data.numberJersey}
+                    {data.goals[0] ?
+                      (data.goals).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.goal_time}"
+                          <IoFootball className="text-xl" />
+                        </span>
+                      ))
+                      : ""}
+
                   </td>
                   <td className="p-2 border border-slate-300">
                     {data.position}
@@ -429,6 +456,29 @@ export default function Detail() {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.status}
+
+                    {data.switchPlayerIn[0] ?
+                      (data.switchPlayerIn).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowInUp className="text-xl text-green-500" />
+                        </span>
+                      ))
+                      : ""}
+
+                    {data.switchPlayerOut[0] ?
+                      (data.switchPlayerOut).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowDown className="text-xl text-red-500" />
+
+                        </span>
+                      ))
+                      : ""}
+
                   </td>
                 </tr>
               ))}
@@ -438,6 +488,14 @@ export default function Detail() {
                   <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
                     {data.numberJersey}
+                    {data.goals[0] ?
+                      (data.goals).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.goal_time}"
+                          <IoFootball className="text-xl" />
+                        </span>
+                      ))
+                      : ""}
                   </td>
                   <td className="p-2 border border-slate-300">
                     {data.position}
@@ -456,6 +514,27 @@ export default function Detail() {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.status}
+                    {data.switchPlayerIn[0] ?
+                      (data.switchPlayerIn).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowInUp className="text-xl text-green-500" />
+                        </span>
+                      ))
+                      : ""}
+
+                    {data.switchPlayerOut[0] ?
+                      (data.switchPlayerOut).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowDown className="text-xl text-red-500" />
+
+                        </span>
+                      ))
+                      : ""}
                   </td>
                 </tr>
               ))}
