@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
+import { BsBoxArrowInUp, BsBoxArrowDown } from 'react-icons/bs'
+import { IoFootball } from "react-icons/io5"
 import Background from "../components/background";
 import { useDownloadExcel } from "react-export-table-to-excel";
 import {
@@ -23,6 +25,8 @@ export default function Detail() {
     .toLocaleDateString("en-GB", options)
     .replace(/\//g, "-");
 
+
+  const [offside, setOffside] = useState([0, 0])
   const [dataMatch, setDataMatch] = useState([]);
   const [data, setData] = useState();
   const [player, setPlayer] = useState([]);
@@ -196,18 +200,26 @@ export default function Detail() {
                 </View>
                 <View style={styles.tableCell}>
                   <Text>
+
                     {
                       data.cards.filter((card) => card.card_type === "red")
                         .length
                     }
+
+                    {data.cards.filter((card) => card.card_type === "red").length}
+
                   </Text>
                 </View>
                 <View style={styles.tableCell}>
                   <Text>
+
                     {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
+
+                    {data.cards.filter((card) => card.card_type === "yellow").length}
+
                   </Text>
                 </View>
               </View>
@@ -231,45 +243,81 @@ export default function Detail() {
                 </View>
                 <View style={styles.tableCell}>
                   <Text>
+
                     {
                       data.cards.filter((card) => card.card_type === "red")
                         .length
                     }
+
+                    {data.cards.filter((card) => card.card_type === "red").length}
                   </Text>
                 </View>
                 <View style={styles.tableCell}>
                   <Text>
+
                     {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
+                    {data.cards.filter((card) => card.card_type === "yellow").length}
                   </Text>
                 </View>
               </View>
             ))}
           </View>
+
         </View>
       </Page>
     </Document>
   );
 
+  const scoreTeamAway = async (idMatch, idTeam) => {
+
+    await axios.get("goal/" + idMatch + "/" + idTeam)
+      .then(res => {
+        setGoalAway(res.data.data)
+      })
+      .catch()
+  }
+  const scoreTeamHome = async (idMatch, idTeam) => {
+
+    await axios.get("goal/" + idMatch + "/" + idTeam)
+      .then(res => {
+        setGoalHome(res.data.data)
+      })
+      .catch()
+  }
+
+
   const onChangeHandle = async (payload) => {
     const data = payload.split(" ");
     console.log(data);
+
     await axios
       .get("match/" + data[0])
       .then((res) => {
         console.log(res.data);
-        setData(res.data.data);
-        let data = res.data.data.home_team.player;
-        console.log(res.data.data.home_team.player);
+        setData(res.data.data)
 
-        setPlayerAway(res.data.data.away_team.player);
+        setPlayer(res.data.data.home_team.player)
+        setPlayerAway(res.data.data.away_team.player)
 
-        console.log(data);
-        setPlayer(data);
+        scoreTeamHome(data[0], data[1])
+        scoreTeamAway(data[0], data[2])
+
+        axios.get("os/" + data[0] + "/" + data[1])
+          .then(res => setOffside(prev => {
+            prev[0] = res.data.data
+            return prev
+          }))
+
+        axios.get("os/" + data[0] + "/" + data[2])
+          .then(res => setOffside(prev => {
+            prev[1] = res.data.data
+            return prev
+          }))
       })
-      .catch((err) => {});
+      .catch((err) => { });
   };
   const getMatch = async () => {
     await axios.get("match").then((res) => {
@@ -277,19 +325,9 @@ export default function Detail() {
     });
   };
 
-  const getTeam = async () => {
-    await axios
-      .get("team")
-      .then((res) => {
-        setDataTeamHome(res.data.data);
-        setDataTeamAway(res.data.data);
-      })
-      .catch((err) => {});
-  };
 
   useEffect(() => {
     getMatch();
-    getTeam();
   }, []);
 
   return (
@@ -346,39 +384,42 @@ export default function Detail() {
             </select>
           </div>
         </form>
+        <div>
 
+        </div>
         <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
           <div className="flex justify-between bg-gray-200 text-gray-700 py-2 px-2">
-            <div className="w-1/3 text-center text-2xl font-bold flex justify-center items-center">
-              <span>Team A</span>
+            <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+              <span>{data ? data.home_team.name : "team kiri"}</span>
             </div>
             <div className="w-1/3 text-center text-5xl font-extrabold">
-              <span>0 - 0</span>
+              <span>{goalHome} - {goalAway}</span>
             </div>
-            <div className="w-1/3 text-center text-2xl font-bold flex justify-center items-center">
-              <span>Team B</span>
+            <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+              <span>{data ? data.away_team.name : "team kanan"}</span>
+            </div>
+          </div>
+
+          <div className="flex justify-between py-3 px-2">
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>{offside[0]}</span>
+            </div>
+            <div className="w-1/3 text-center text-xl font-semibold">
+              <span>Off side</span>
+            </div>
+            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+              <span>{offside[1]}</span>
             </div>
           </div>
           <div className="flex justify-between py-3 px-2">
             <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
+              <span>{data ? (data.ballPossession[0] ? Math.round(data.ballPossession[0].possession_time) + "%" : "0") : "0"}</span>
             </div>
             <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Yellow Card</span>
+              <span>Ball Possession</span>
             </div>
             <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
-            </div>
-          </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>1</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Red Card</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>3</span>
+              <span>{data ? (data.ballPossession[1] ? Math.round(data.ballPossession[1].possession_time) + "%" : "0") : "0"}</span>
             </div>
           </div>
         </div>
@@ -395,6 +436,7 @@ export default function Detail() {
               <th className="p-2 border border-slate-300">Team</th>
               <th className="p-2 border border-slate-300">Kartu Merah</th>
               <th className="p-2 border border-slate-300">Kartu Kuning</th>
+              <th className="p-2 border border-slate-300">Status</th>
             </thead>
             <tbody className="text-center">
               {player.map((data, index) => (
@@ -403,6 +445,15 @@ export default function Detail() {
                   <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
                     {data.numberJersey}
+                    {data.goals[0] ?
+                      (data.goals).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.goal_time}"
+                          <IoFootball className="text-xl" />
+                        </span>
+                      ))
+                      : ""}
+
                   </td>
                   <td className="p-2 border border-slate-300">
                     {data.position}
@@ -421,6 +472,29 @@ export default function Detail() {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.status}
+
+                    {data.switchPlayerIn[0] ?
+                      (data.switchPlayerIn).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowInUp className="text-xl text-green-500" />
+                        </span>
+                      ))
+                      : ""}
+
+                    {data.switchPlayerOut[0] ?
+                      (data.switchPlayerOut).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowDown className="text-xl text-red-500" />
+
+                        </span>
+                      ))
+                      : ""}
+
                   </td>
                 </tr>
               ))}
@@ -430,6 +504,14 @@ export default function Detail() {
                   <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
                     {data.numberJersey}
+                    {data.goals[0] ?
+                      (data.goals).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.goal_time}"
+                          <IoFootball className="text-xl" />
+                        </span>
+                      ))
+                      : ""}
                   </td>
                   <td className="p-2 border border-slate-300">
                     {data.position}
@@ -448,6 +530,27 @@ export default function Detail() {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.status}
+                    {data.switchPlayerIn[0] ?
+                      (data.switchPlayerIn).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowInUp className="text-xl text-green-500" />
+                        </span>
+                      ))
+                      : ""}
+
+                    {data.switchPlayerOut[0] ?
+                      (data.switchPlayerOut).map(data => (
+                        <span className="pl-2 font-bold inline">
+                          {data.switch_time}"
+                          <BsBoxArrowDown className="text-xl text-red-500" />
+
+                        </span>
+                      ))
+                      : ""}
                   </td>
                 </tr>
               ))}

@@ -8,12 +8,16 @@ import swal from "sweetalert";
 import Modal from "../components/Modal";
 
 export default function Dasboard() {
+  const interval = 1000
   const [countdown, setCountdown] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [injuryTime, setInjuryTime] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [change, setChange] = useState("");
-  const [indexChange, setIndexChange] = useState("");
+  const [indexChange, setIndexChange] = useState();
+  const [idChange, setIdChange] = useState()
+  const [idAway, setIdAway] = useState()
+  const [idHome, setIdHome] = useState()
   // Form match
   const [homeTeam, setHomeTeam] = useState();
   const [awayTeam, setAwayTeam] = useState();
@@ -59,7 +63,7 @@ export default function Dasboard() {
     if (isRunning) {
       timer = setInterval(() => {
         setCountdown((prevCountdown) => prevCountdown + 1);
-      }, 1000);
+      }, interval);
     }
 
     return () => {
@@ -75,12 +79,14 @@ export default function Dasboard() {
     setTeam(res.data.data);
   };
 
-  const switchPlayerHome = (index) => {
+  const switchPlayerHome = (index, id_player) => {
+    setIdChange(id_player)
     setIndexChange(index);
     setChange("home");
     setOpenModal(true);
   };
-  const switchPlayerAway = (index) => {
+  const switchPlayerAway = (index, id_player) => {
+    setIdChange(id_player)
     setIndexChange(index);
     setChange("away");
     setOpenModal(true);
@@ -138,11 +144,20 @@ export default function Dasboard() {
       .catch();
   };
 
-  const offSides = async (player, name) => {
+  const offSides = async (player, id_team) => {
     const data = {
       match_id: matchId,
-      player_id: player,
+      offset_team_id: id_team,
+      offset_time: minutes
     };
+    await axios.post("os/", data)
+      .then(res => {
+        swal({
+          title: "team ini offside",
+          icon: "warning"
+        })
+      })
+      .catch(err => { })
   };
 
   const goalButton = async (player, team) => {
@@ -252,6 +267,71 @@ export default function Dasboard() {
     }
   };
 
+  const submitSwitch = (id_player_in, index, team) => {
+    if (team === "home") {
+      let playerWillOut = playerHome[indexChange]
+      let playerWillIn = playerHomeCadangan[index]
+
+      
+      axios.post("switch", {
+        match_id: matchId,
+        player_out_id: playerWillOut.id,
+        player_in_id: playerWillIn.id,
+        switch_time: minutes
+      })
+        .then(res => {
+          setPlayerHome(prevArray => {
+            const newArray = [...prevArray];
+            newArray[indexChange] = playerWillIn;
+            return newArray;
+          });
+          setPlayerHomeCadangan(prevArray => {
+            const newArray = [...prevArray];
+            newArray[index] = playerWillOut;
+            return newArray;
+          });
+          setOpenModal(false)
+
+        })
+        .catch(err => {
+          swal({
+            title: "cant switch"
+          })
+        })
+    } else {
+      let playerWillOut = playerAway[indexChange]
+      let playerWillIn = playerAwayCadangan[index]
+
+      
+      axios.post("switch", {
+        match_id: matchId,
+        player_out_id: playerWillOut.id,
+        player_in_id: playerWillIn.id,
+        switch_time: minutes
+      })
+        .then(res => {
+          setPlayerAway(prevArray => {
+            const newArray = [...prevArray];
+            newArray[indexChange] = playerWillIn;
+            return newArray;
+          });
+          setPlayerAwayCadangan(prevArray => {
+            const newArray = [...prevArray];
+            newArray[index] = playerWillOut;
+            return newArray;
+          });
+          setOpenModal(false)
+
+          
+        })
+        .catch(err => {
+          swal({
+            title: "cant switch"
+          })
+        })
+    }
+  }
+
   // --------------
 
   // UseEffect
@@ -267,6 +347,7 @@ export default function Dasboard() {
         title: "Babak Pertama selesai",
         icon: "warning",
       });
+
     }
     if (countdown === 5400 + injuryTime) {
       setIsRunning(false);
@@ -275,6 +356,18 @@ export default function Dasboard() {
         title: "Time is Over",
         icon: "warning",
       });
+      axios.post("bp/", {
+        time: countdown,
+        possession_time: team1Possession,
+        match_id: matchId,
+        team_id: idHome
+      })
+      axios.post("bp/", {
+        time: countdown,
+        possession_time: team2Possession,
+        match_id: matchId,
+        team_id: idAway
+      })
     }
   }, [countdown]);
 
@@ -290,7 +383,7 @@ export default function Dasboard() {
         if (isTeam2Running) {
           setTeam2Possession((prevPossession) => prevPossession + 1);
         }
-      }, 1000);
+      }, interval);
     }
 
     return () => {
@@ -321,7 +414,10 @@ export default function Dasboard() {
                 name=""
                 className="shadow appearance-none border rounded w-40 py-2 px-3 text-base text-center text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={homeTeam}
-                onChange={(e) => onChangeHandleHome(e, e.target.value)}
+                onChange={(e) => {
+                  setIdHome(e.target.value)
+                  onChangeHandleHome(e, e.target.value)
+                }}
               >
                 <option value="">---Pilih Team---</option>
                 {team.map((data) => (
@@ -414,7 +510,10 @@ export default function Dasboard() {
                 name=""
                 className="shadow appearance-none border rounded w-40 py-2 px-3 text-base text-center text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                 value={awayTeam}
-                onChange={(e) => onChangeHandleAway(e, e.target.value)}
+                onChange={(e) => {
+                  setIdAway(e.target.value)
+                  onChangeHandleAway(e, e.target.value)
+                }}
               >
                 <option value="">---Pilih Team---</option>
                 {team.map((data) => (
@@ -462,7 +561,7 @@ export default function Dasboard() {
                 </div>
                 <div className="ml-5">
                   <button
-                    onClick={() => offSides(data.id, data.name)}
+                    onClick={() => offSides(data.id, data.team_id)}
                     className="w-10 h-14 bg-gray-800 rounded text-white"
                   >
                     OS
@@ -470,7 +569,7 @@ export default function Dasboard() {
                 </div>
                 <div className="flex items-center justify-center ml-5">
                   <button
-                    onClick={() => switchPlayerHome(index)}
+                    onClick={() => switchPlayerHome(index, data.id)}
                     className="text-slate-500 hover:text-slate-800 transition-colors text-4xl"
                   >
                     <MdSwapVert className="text-white" />
@@ -484,7 +583,7 @@ export default function Dasboard() {
               <div key={data.numberJersey} className="flex justify-end">
                 <div className="flex items-center justify-center mr-5">
                   <button
-                    onClick={() => switchPlayerAway(index)}
+                    onClick={() => switchPlayerAway(index, data.id)}
                     className="text-slate-500 hover:text-slate-800 transition-colors text-4xl"
                   >
                     <MdSwapVert className="text-white" />
@@ -492,7 +591,7 @@ export default function Dasboard() {
                 </div>
                 <div className="mr-5">
                   <button
-                    onClick={() => offSides(data.id, data.name)}
+                    onClick={() => offSides(data.id, data.team_id)}
                     className="w-10 h-14 bg-gray-800 rounded text-white"
                   >
                     OS
@@ -556,7 +655,7 @@ export default function Dasboard() {
                   </div>
                   <div className="ml-5">
                     <button
-                      onClick={() => offSides(data.id, data.name)}
+                      onClick={() => offSides(data.id, data.team_id)}
                       className="w-10 h-14 bg-gray-800 rounded text-white"
                     >
                       OS
@@ -580,7 +679,7 @@ export default function Dasboard() {
                   </div>
                   <div className="mr-5">
                     <button
-                      onClick={() => offSides(data.id, data.name)}
+                      onClick={() => offSides(data.id, data.team_id)}
                       className="w-10 h-14 bg-gray-800 rounded text-white"
                     >
                       OS
@@ -610,7 +709,7 @@ export default function Dasboard() {
           <h1 className="text-center text-3xl">Pemain Cadangan</h1>
           {change === "home" ? (
             <div className="p-10 flex justify-center flex-col gap-y-5">
-              {playerHomeCadangan.map((data) => (
+              {playerHomeCadangan.map((data, index) => (
                 <div key={data.numberJersey} className="flex justify-center">
                   <h2 className="text-slate-100 py-2 px-3 rounded z-[2] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                     {data.numberJersey}
@@ -623,7 +722,9 @@ export default function Dasboard() {
                   </h3>
 
                   <div className="flex items-center justify-center ml-5">
-                    <button className=" hover:text-slate-800 transition-colors text-4xl">
+                    <button
+                      onClick={() => submitSwitch(data.id, index, "home")}
+                      className=" hover:text-slate-800 transition-colors text-4xl">
                       <MdSwapVert className="text-slate-800" />
                     </button>
                   </div>
@@ -633,7 +734,7 @@ export default function Dasboard() {
           ) : (
             <div className="">
               <div className="p-10 flex justify-center flex-col gap-y-5">
-                {playerAwayCadangan.map((data) => (
+                {playerAwayCadangan.map((data, index) => (
                   <div key={data.numberJersey} className="flex justify-center">
                     <h2 className="text-slate-100 py-2 px-3 rounded z-[2] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
                       {data.numberJersey}
@@ -645,7 +746,9 @@ export default function Dasboard() {
                       {data.position}
                     </h3>
                     <div className="flex items-center justify-center ml-5">
-                      <button className=" hover:text-slate-800 transition-colors text-4xl">
+                      <button
+                        onClick={() => submitSwitch(data.id, index, "away")}
+                        className=" hover:text-slate-800 transition-colors text-4xl">
                         <MdSwapVert className="text-slate-800" />
                       </button>
                     </div>
