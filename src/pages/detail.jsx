@@ -22,7 +22,7 @@ export default function Detail() {
     .replace(/\//g, "-");
 
   const [dataMatch, setDataMatch] = useState([])
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
   const [player, setPlayer] = useState([])
   const [playerAway, setPlayerAway] = useState([])
   const [goalHome, setGoalHome] = useState()
@@ -126,9 +126,21 @@ export default function Detail() {
     </Document>
   );
 
-  const scoreTeam = async (idMatch, idTeam) => {
-    
-    await axios.get()
+  const scoreTeamAway = async (idMatch, idTeam) => {
+
+    await axios.get("goal/" + idMatch + "/" + idTeam)
+      .then(res => {
+        setGoalAway(res.data.data)
+      })
+      .catch()
+  }
+  const scoreTeamHome = async (idMatch, idTeam) => {
+
+    await axios.get("goal/" + idMatch + "/" + idTeam)
+      .then(res => {
+        setGoalHome(res.data.data)
+      })
+      .catch()
   }
 
   const onChangeHandle = async (payload) => {
@@ -138,14 +150,12 @@ export default function Detail() {
       .then(res => {
         console.log(res.data);
         setData(res.data.data)
-        let data = res.data.data.home_team.player
-        console.log(res.data.data.home_team.player);
 
+        setPlayer(res.data.data.home_team.player)
         setPlayerAway(res.data.data.away_team.player)
 
-        console.log(data);
-        setPlayer(data)
-
+        scoreTeamHome(data[0], data[1])
+        scoreTeamAway(data[0], data[2])
       })
       .catch(err => {
 
@@ -214,14 +224,14 @@ export default function Detail() {
 
         <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
           <div className="flex justify-between bg-gray-200 text-gray-700 py-2 px-2">
-            <div className="w-1/3 text-center text-2xl font-bold flex justify-center items-center">
-              <span>Team A</span>
+            <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+              <span>{data ? data.home_team.name : "team kiri"}</span>
             </div>
             <div className="w-1/3 text-center text-5xl font-extrabold">
-              <span>0 - 0</span>
+              <span>{goalHome} - {goalAway}</span>
             </div>
-            <div className="w-1/3 text-center text-2xl font-bold flex justify-center items-center">
-              <span>Team B</span>
+            <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+              <span>{data ? data.away_team.name : "team kanan"}</span>
             </div>
           </div>
           <div className="flex justify-between py-3 px-2">
