@@ -24,6 +24,9 @@ export default function Detail() {
   const [dataMatch, setDataMatch] = useState([])
   const [data, setData] = useState()
   const [player, setPlayer] = useState([])
+  const [playerAway, setPlayerAway] = useState([])
+  const [goalHome, setGoalHome] = useState()
+  const [goalAway, setGoalAway] = useState()
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -99,23 +102,23 @@ export default function Detail() {
           {/* Table */}
           <View style={styles.table}>
             {player.map((data, index) => (
-              <View style={styles.tableRow} key={index}>              
-                  <View style={styles.tableCell}>
-                    <Text>{index + 1}</Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Text>{data.name}</Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Text>{data.numberJersey}</Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Text>{data.position}</Text>
-                  </View>
-                  <View style={styles.tableCell}>
-                    <Text>{data.team.name}</Text>
-                  </View>
+              <View style={styles.tableRow} key={index}>
+                <View style={styles.tableCell}>
+                  <Text>{index + 1}</Text>
                 </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.name}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.numberJersey}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.position}</Text>
+                </View>
+                <View style={styles.tableCell}>
+                  <Text>{data.team.name}</Text>
+                </View>
+              </View>
             ))}
           </View>
         </View>
@@ -124,26 +127,24 @@ export default function Detail() {
   );
 
 
-  const onChangeHandle = async (id) => {
-    await axios.get("match/"+id)
-    .then(res => {
-      console.log(res.data);
-      setData(res.data.data)
-      let data = []
-      console.log(res.data.data.home_team.player);
-      res.data.data.home_team.player.map(player => {
-        data.push(player)
-      })
-      res.data.data.away_team.player.map(player => {
-        data.push(player)
-      })
-     
-      console.log(data);
-      setPlayer(data)
-    })
-    .catch(err => {
+  const onChangeHandle = async (payload) => {
+    const data = payload.split(" ")
+    console.log(data);
+    await axios.get("match/" + data[0])
+      .then(res => {
+        console.log(res.data);
+        setData(res.data.data)
+        let data = res.data.data.home_team.player
+        console.log(res.data.data.home_team.player);
 
-    })
+        setPlayerAway(res.data.data.away_team.player)
+
+        console.log(data);
+        setPlayer(data)
+      })
+      .catch(err => {
+
+      })
   }
   const getMatch = async () => {
     await axios.get("match")
@@ -161,7 +162,7 @@ export default function Detail() {
       <Navbar />
       <Background />
       <main className="font-Poppins">
-      {/* <PDFDownloadLink
+        {/* <PDFDownloadLink
           document={<MyDoc detail={detail} />}
           fileName={`Play-${formattedDate}.pdf`}
           className="bg-red-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-red-800 transition-colors"
@@ -185,14 +186,14 @@ export default function Detail() {
               Detail Pertandingan
             </label>
             <select
-            onChange={(e) => onChangeHandle(e.target.value)}
+              onChange={(e) => onChangeHandle(e.target.value)}
               name=""
               id="match"
               className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value="">---Pilih Pertandingan---</option>
               {dataMatch.map(data => (
-                <option className="text-center"  value={data.id}>
+                <option className="text-center" value={`${data.id} ${data.home_team.id} ${data.away_team.id}`}>
                   <span>
                     {data.home_team.name}------
                   </span>
@@ -256,47 +257,55 @@ export default function Detail() {
               <th className="p-2 border border-slate-300">Kartu Kuning</th>
             </thead>
             <tbody className="text-center">
+              {player.map((data, index) => (
                 <tr>
-                  <td className="p-2 border border-slate-300">1</td>
-                  <td className="p-2 border border-slate-300">Nama</td>
+                  <td className="p-2 border border-slate-300">{index + 1}</td>
+                  <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
-                    Nomor J 
+                    {data.numberJersey}
                   </td>
                   <td className="p-2 border border-slate-300">
-                   Posisi 
+                    {data.position}
                   </td>
                   <td className="p-2 border border-slate-300">
-                    Team
+                    {data.team.name}
                   </td>
                   <td className="p-2 border border-slate-300">
-                    Team
+                    {((data.cards).filter(card => card.card_type === "red")).length}
+
                   </td>
                   <td className="p-2 border border-slate-300">
-                    Team
+                    {((data.cards).filter(card => card.card_type === "yellow")).length}
+
                   </td>
                 </tr>
-              <tr>
-                <td className="p-2 border border-slate-300">1</td>
-                <td className="p-2 border border-slate-300">Nama</td>
-                <td className="p-2 border border-slate-300">
-                  Nomor J
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Posisi
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-                <td className="p-2 border border-slate-300">
-                  Team
-                </td>
-              </tr>
+              ))}
+              {playerAway.map((data, index) => (
+
+
+                <tr>
+                  <td className="p-2 border border-slate-300">{index + 1}</td>
+                  <td className="p-2 border border-slate-300">{data.name}</td>
+                  <td className="p-2 border border-slate-300">
+                    {data.numberJersey}
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.position}
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {data.team.name}
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {((data.cards).filter(card => card.card_type === "red")).length}
+
+                  </td>
+                  <td className="p-2 border border-slate-300">
+                    {((data.cards).filter(card => card.card_type === "yellow")).length}
+
+                  </td>
+
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
