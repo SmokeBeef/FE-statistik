@@ -8,7 +8,7 @@ import swal from "sweetalert";
 import Modal from "../components/Modal";
 
 export default function Dasboard() {
-  const interval = 1
+  const interval = 1000
   const [countdown, setCountdown] = useState(0);
   const [isRunning, setIsRunning] = useState(false);
   const [injuryTime, setInjuryTime] = useState(0);
