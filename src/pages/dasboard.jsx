@@ -41,6 +41,7 @@ export default function Dasboard() {
   };
 
   const handleTeam1Possession = () => {
+
     if (!isRunning) return;
     setIsTeam1Running((prev) => !prev);
     setIsTeam2Running(false);
@@ -431,7 +432,7 @@ export default function Dasboard() {
           </div>
         </div>
         <div className="flex justify-between">
-          <div className="team w-1/3 mt-10 ">
+          <div className="team w-1/2 mt-10 ">
             {playerHome.map((data, index) => (
               <div key={data.numberJersey} className="flex">
                 <button
@@ -478,9 +479,9 @@ export default function Dasboard() {
               </div>
             ))}
           </div>
-          <div className="team w-1/3 mt-10">
+          <div className="team w-1/2 mt-10">
             {playerAway.map((data, index) => (
-              <div key={data.numberJersey} className="flex">
+              <div key={data.numberJersey} className="flex justify-end">
                 <div className="flex items-center justify-center mr-5">
                   <button
                     onClick={() => switchPlayerAway(index)}
@@ -535,7 +536,7 @@ export default function Dasboard() {
             ""
           )}
           <div className="flex justify-between">
-            <div className="team w-1/3 mt-10 ">
+            <div className="team w-1/2 mt-10 ">
               {playerHomeCadangan.map((data) => (
                 <div key={data.numberJersey} className="flex">
                   <button className="text-slate-100 py-2 px-3 rounded z-[1] bg-slate-800 hover:bg-slate-900 w-14 h-14 flex justify-center items-center">
@@ -548,18 +549,18 @@ export default function Dasboard() {
                     {data.position}
                   </h3>
                   <div className="ml-5">
+                    <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
+                  </div>
+                  <div className="ml-5">
+                    <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
+                  </div>
+                  <div className="ml-5">
                     <button
                       onClick={() => offSides(data.id, data.name)}
                       className="w-10 h-14 bg-gray-800 rounded text-white"
                     >
                       OS
                     </button>
-                  </div>
-                  <div className="ml-5">
-                    <button className="w-10 h-14 bg-yellow-300 hover:bg-yellow-400 rounded transition-colors"></button>
-                  </div>
-                  <div className="ml-5">
-                    <button className="w-10 h-14 bg-red-600 hover:bg-red-700 rounded transition-colors"></button>
                   </div>
                   <div className="flex items-center justify-center ml-5">
                     <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
@@ -569,9 +570,9 @@ export default function Dasboard() {
                 </div>
               ))}
             </div>
-            <div className=" w-1/3 mt-10">
+            <div className=" w-1/2 mt-10">
               {playerAwayCadangan.map((data) => (
-                <div key={data.numberJersey} className="flex">
+                <div key={data.numberJersey} className="flex justify-end">
                   <div className="flex items-center justify-center mr-5">
                     <button className="text-slate-500 hover:text-slate-800 transition-colors text-4xl">
                       <MdSwapVert className="text-white" />

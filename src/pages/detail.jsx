@@ -9,9 +9,12 @@ import {
   View,
   Document,
   StyleSheet,
-  Image
+  Image,
 } from "@react-pdf/renderer";
-import axios from "../utils/axios"
+import axios from "../utils/axios";
+import { AiTwotoneIdcard } from 'react-icons/ai';
+import { IconContext } from 'react-icons';
+
 
 export default function Detail() {
   const tableRef = useRef(null);
@@ -21,12 +24,14 @@ export default function Detail() {
     .toLocaleDateString("en-GB", options)
     .replace(/\//g, "-");
 
-  const [dataMatch, setDataMatch] = useState([])
-  const [data, setData] = useState()
-  const [player, setPlayer] = useState([])
-  const [playerAway, setPlayerAway] = useState([])
-  const [goalHome, setGoalHome] = useState()
-  const [goalAway, setGoalAway] = useState()
+  const [dataMatch, setDataMatch] = useState([]);
+  const [data, setData] = useState();
+  const [player, setPlayer] = useState([]);
+  const [playerAway, setPlayerAway] = useState([]);
+  const [goalHome, setGoalHome] = useState();
+  const [goalAway, setGoalAway] = useState();
+  const [dataTeamHome, setDataTeamHome] = useState([]);
+  const [dataTeamAway, setDataTeamAway] = useState([]);
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -38,6 +43,7 @@ export default function Detail() {
     page: {
       flexDirection: "row",
       backgroundColor: "#ffffff",
+      justifyContent: "space-between", // Add this line to align the date and images
     },
     section: {
       margin: 10,
@@ -46,6 +52,7 @@ export default function Detail() {
     },
     table: {
       marginBottom: 10,
+      marginTop:30,
       fontFamily: "Helvetica",
       fontSize: 10,
       width: "100%",
@@ -53,6 +60,8 @@ export default function Detail() {
     tableHeader: {
       backgroundColor: "#f0f0f0",
       fontWeight: "bold",
+      width: "100%",
+      padding: 5,
     },
     tableRow: {
       borderBottomWidth: 1,
@@ -60,117 +69,240 @@ export default function Detail() {
       flexDirection: "row",
     },
     tableCell: {
-      padding: 5,
+      paddingHorizontal: 25,
+      paddingVertical: 5,
       color: "#000000",
+      textAlign: "center",
+      width: "100%",
+      alignSelf: "center",
+    },
+    tableHeaderText: {
+      fontSize: 10,
+      fontWeight: "bold",
+      textAlign: "center",
+    },
+    imageContainer: {
+      width: 75,
+      height: 75,
+      margin: 5,
+      alignSelf: "center", // Align the images vertically centered
+      marginHorizontal:30,
+    },
+    image: {
+      objectFit: "contain",
+      width: "100%",
+      height: "100%",
+    },
+    scoreContainer: {
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      marginBottom: 10,
+    },
+    scoreText: {
+      fontSize: 16,
+      fontWeight: "bold",
+      marginHorizontal: 10,
+    },
+    dateContainer: {
+      alignSelf: "center",
+      marginBottom: 10,
+    },
+    dateText: {
+      fontSize: 14,
+      fontWeight: "bold",
     },
   });
 
-  const MyDoc = () => (
+  const MyDoc = ({ player, playerAway, dataTeamHome, dataTeamAway }) => (
     <Document>
-      <Page size="A4">
+      <Page size="F4">
         <View style={styles.section}>
           {/* Date */}
           <View style={styles.dateContainer}>
-            <Text style={styles.dateText}>Tanggal Permainan</Text>
+            <Text style={styles.dateText}>{formattedDate}</Text>
           </View>
 
           <View style={styles.page}>
             {/* Image 1 */}
             <View style={styles.imageContainer}>
-              <Image
-                style={styles.image}
-                src={`${process.env.PUBLIC_URL}/profile.png`}
-              />
+              {dataTeamHome.map((data, index) => (
+                <Image style={styles.image} src={data.logo} />
+              ))}
             </View>
 
             {/* Score */}
             <View style={styles.scoreContainer}>
-              <Text style={styles.scoreText}>Score</Text>
+              {player.map((data, index) => (
+                <Text style={styles.scoreText}>{data.goal}</Text>
+              ))}
               <Text style={styles.scoreText}>-</Text>
-              <Text style={styles.scoreText}>Score</Text>
+              {playerAway.map((data, index) => (
+                <Text style={styles.scoreText}>{data.goal}</Text>
+              ))}
             </View>
 
             {/* Image 2 */}
             <View style={styles.imageContainer}>
-              <Image
-                style={styles.image}
-                src={`${process.env.PUBLIC_URL}/profile.png`}
-              />
+              {dataTeamAway.map((data, index) => (
+                <Image style={styles.image} src={data.logo} />
+              ))}
             </View>
           </View>
 
-          {/* Table */}
-          <View style={styles.table}>
-            {player.map((data, index) => (
-              <View style={styles.tableRow} key={index}>
-                <View style={styles.tableCell}>
-                  <Text>{index + 1}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.name}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.numberJersey}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.position}</Text>
-                </View>
-                <View style={styles.tableCell}>
-                  <Text>{data.team.name}</Text>
-                </View>
-              </View>
-            ))}
+{/* Table */}
+<View style={styles.table}>
+          {/* Table Header */}
+          <View style={styles.tableRow}>
+            <View style={styles.tableCell}>
+              <Text style={styles.tableHeaderText}>No</Text>
+            </View>
+            <View style={styles.tableCell}>
+              <Text style={styles.tableHeaderText}>Nama</Text>
+            </View>
+            <View style={styles.tableCell}>
+              <Text style={styles.tableHeaderText}>Nomor Jersey</Text>
+            </View>
+            <View style={styles.tableCell}>
+              <Text style={styles.tableHeaderText}>Posisi</Text>
+            </View>
+            <View style={styles.tableCell}>
+              <Text style={styles.tableHeaderText}>Team</Text>
+            </View>
+            <View style={styles.tableCell}>
+              <Text style={styles.tableHeaderText}>Kartu Merah</Text>
+            </View>
+            <View style={styles.tableCell}>
+              <Text style={styles.tableHeaderText}>Kartu Kuning</Text>
+            </View>
           </View>
+
+          {/* Table Body */}
+          {player.map((data, index) => (
+            <View style={styles.tableRow} key={index}>
+              <View style={styles.tableCell}>
+                <Text>{index + 1}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.name}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.numberJersey}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.position}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.team.name}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>
+                  {data.cards.filter((card) => card.card_type === "red").length}
+                </Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>
+                  {data.cards.filter((card) => card.card_type === "yellow").length}
+                </Text>
+              </View>
+            </View>
+          ))}
+          {playerAway.map((data, index) => (
+            <View style={styles.tableRow} key={index}>
+              <View style={styles.tableCell}>
+                <Text>{index + 1}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.name}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.numberJersey}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.position}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>{data.team.name}</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>
+                  {data.cards.filter((card) => card.card_type === "red").length}
+                </Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text>
+                  {data.cards.filter((card) => card.card_type === "yellow").length}
+                </Text>
+              </View>
+            </View>
+          ))}
+        </View>
+
         </View>
       </Page>
     </Document>
   );
 
-
   const onChangeHandle = async (payload) => {
-    const data = payload.split(" ")
+    const data = payload.split(" ");
     console.log(data);
-    await axios.get("match/" + data[0])
-      .then(res => {
+    await axios
+      .get("match/" + data[0])
+      .then((res) => {
         console.log(res.data);
-        setData(res.data.data)
-        let data = res.data.data.home_team.player
+        setData(res.data.data);
+        let data = res.data.data.home_team.player;
         console.log(res.data.data.home_team.player);
 
-        setPlayerAway(res.data.data.away_team.player)
+        setPlayerAway(res.data.data.away_team.player);
 
         console.log(data);
-        setPlayer(data)
+        setPlayer(data);
       })
-      .catch(err => {
-
-      })
-  }
+      .catch((err) => {});
+  };
   const getMatch = async () => {
-    await axios.get("match")
-      .then(res => {
-        setDataMatch(res.data.data)
+    await axios.get("match").then((res) => {
+      setDataMatch(res.data.data);
+    });
+  };
+
+  const getTeam = async () => {
+    await axios
+      .get("team")
+      .then((res) => {
+        setDataTeamHome(res.data.data);
+        setDataTeamAway(res.data.data);
       })
-      .catch(err => { })
-  }
+      .catch((err) => {});
+  };
+
   useEffect(() => {
-    getMatch()
-  }, [])
+    getMatch();
+    getTeam();
+  }, []);
 
   return (
     <div>
       <Navbar />
       <Background />
       <main className="font-Poppins">
-        {/* <PDFDownloadLink
-          document={<MyDoc detail={detail} />}
+        <PDFDownloadLink
+          document={
+            <MyDoc
+              player={player}
+              playerAway={playerAway}
+              dataTeamHome={dataTeamHome}
+              dataTeamAway={dataTeamAway}
+            />
+          }
           fileName={`Play-${formattedDate}.pdf`}
           className="bg-red-500 text-slate-100 rounded-lg py-2 px-3 ml-2 hover:bg-red-800 transition-colors"
         >
           {({ blob, url, loading, error }) =>
             loading ? "Loading document..." : "Export to PDF"
           }
-        </PDFDownloadLink> */}
+        </PDFDownloadLink>
         <button
           className="bg-green-500 text-slate-100 rounded-lg py-2 px-3 ml-4 mt-4 hover:bg-green-800 transition-colors shadow-md"
           onClick={onDownload}
@@ -192,16 +324,14 @@ export default function Detail() {
               className="shadow appearance-none border rounded py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
             >
               <option value="">---Pilih Pertandingan---</option>
-              {dataMatch.map(data => (
-                <option className="text-center" value={`${data.id} ${data.home_team.id} ${data.away_team.id}`}>
-                  <span>
-                    {data.home_team.name}------
-                  </span>
-                  <span>
-                    {data.away_team.name}
-                  </span>
+              {dataMatch.map((data) => (
+                <option
+                  className="text-center"
+                  value={`${data.id} ${data.home_team.id} ${data.away_team.id}`}
+                >
+                  <span>{data.home_team.name}------</span>
+                  <span>{data.away_team.name}</span>
                 </option>
-
               ))}
             </select>
           </div>
@@ -271,18 +401,20 @@ export default function Detail() {
                     {data.team.name}
                   </td>
                   <td className="p-2 border border-slate-300">
-                    {((data.cards).filter(card => card.card_type === "red")).length}
-
+                    {
+                      data.cards.filter((card) => card.card_type === "red")
+                        .length
+                    }
                   </td>
                   <td className="p-2 border border-slate-300">
-                    {((data.cards).filter(card => card.card_type === "yellow")).length}
-
+                    {
+                      data.cards.filter((card) => card.card_type === "yellow")
+                        .length
+                    }
                   </td>
                 </tr>
               ))}
               {playerAway.map((data, index) => (
-
-
                 <tr>
                   <td className="p-2 border border-slate-300">{index + 1}</td>
                   <td className="p-2 border border-slate-300">{data.name}</td>
@@ -296,14 +428,17 @@ export default function Detail() {
                     {data.team.name}
                   </td>
                   <td className="p-2 border border-slate-300">
-                    {((data.cards).filter(card => card.card_type === "red")).length}
-
+                    {
+                      data.cards.filter((card) => card.card_type === "red")
+                        .length
+                    }
                   </td>
                   <td className="p-2 border border-slate-300">
-                    {((data.cards).filter(card => card.card_type === "yellow")).length}
-
+                    {
+                      data.cards.filter((card) => card.card_type === "yellow")
+                        .length
+                    }
                   </td>
-
                 </tr>
               ))}
             </tbody>
