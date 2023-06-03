@@ -16,6 +16,7 @@ import {
 import axios from "../utils/axios";
 import { AiTwotoneIdcard } from 'react-icons/ai';
 import { IconContext } from 'react-icons';
+import back from "../utils/back";
 
 
 export default function Detail() {
@@ -370,42 +371,47 @@ export default function Detail() {
             </select>
           </div>
         </form>
+        <div className="flex justify-around items-center px-10">
+          <img src={data ? `${back}team/${data.home_team.logo}`: ""} alt="logo team kiri" className="w-36"/>
+          <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
+            <div className="flex justify-between bg-gray-200 text-gray-700 py-2 px-2">
+              <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+                <span>{data ? data.home_team.name : "team kiri"}</span>
+              </div>
+              <div className="w-1/3 text-center text-5xl font-extrabold">
+                <span>{goalHome} - {goalAway}</span>
+              </div>
+              <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
+                <span>{data ? data.away_team.name : "team kanan"}</span>
+              </div>
+            </div>
 
-        <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
-          <div className="flex justify-between bg-gray-200 text-gray-700 py-2 px-2">
-            <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
-              <span>{data ? data.home_team.name : "team kiri"}</span>
-            </div>
-            <div className="w-1/3 text-center text-5xl font-extrabold">
-              <span>{goalHome} - {goalAway}</span>
-            </div>
-            <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
-              <span>{data ? data.away_team.name : "team kanan"}</span>
-            </div>
-          </div>
 
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>{offside[0]}</span>
+
+            <div className="flex justify-between py-3 px-2">
+              <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+                <span>{offside[0]}</span>
+              </div>
+              <div className="w-1/3 text-center text-xl font-semibold">
+                <span>Off side</span>
+              </div>
+              <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+                <span>{offside[1]}</span>
+              </div>
             </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Off side</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>{offside[1]}</span>
+            <div className="flex justify-between py-3 px-2">
+              <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+                <span>{data ? (data.ballPossession[0] ? Math.round(data.ballPossession[0].possession_time) + "%" : "0") : "0"}</span>
+              </div>
+              <div className="w-1/3 text-center text-xl font-semibold">
+                <span>Ball Possession</span>
+              </div>
+              <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
+                <span>{data ? (data.ballPossession[1] ? Math.round(data.ballPossession[1].possession_time) + "%" : "0") : "0"}</span>
+              </div>
             </div>
           </div>
-          <div className="flex justify-between py-3 px-2">
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>{data ? (data.ballPossession[0] ? Math.round(data.ballPossession[0].possession_time) + "%" : "0") : "0"}</span>
-            </div>
-            <div className="w-1/3 text-center text-xl font-semibold">
-              <span>Ball Possession</span>
-            </div>
-            <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-              <span>{data ? (data.ballPossession[1] ? Math.round(data.ballPossession[1].possession_time) + "%" : "0") : "0"}</span>
-            </div>
-          </div>
+          <img src={data ? `${back}team/${data.away_team.logo}` : ""} alt="logo team kiri" className="w-36 h-fit" />
         </div>
         <div className="flex justify-center my-10">
           <table
