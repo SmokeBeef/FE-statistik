@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import Navbar from "../components/Navbar";
-import { BsBoxArrowInUp, BsBoxArrowDown } from 'react-icons/bs'
-import { IoFootball } from "react-icons/io5"
+import { BsBoxArrowInUp, BsBoxArrowDown } from "react-icons/bs";
+import { IoFootball } from "react-icons/io5";
 import Background from "../components/background";
 import { useDownloadExcel } from "react-export-table-to-excel";
 import {
@@ -14,8 +14,6 @@ import {
   Image,
 } from "@react-pdf/renderer";
 import axios from "../utils/axios";
-import { AiTwotoneIdcard } from 'react-icons/ai';
-import { IconContext } from 'react-icons';
 import back from "../utils/back";
 
 export default function Detail() {
@@ -26,16 +24,13 @@ export default function Detail() {
     .toLocaleDateString("en-GB", options)
     .replace(/\//g, "-");
 
-
-  const [offside, setOffside] = useState([0, 0])
+  const [offside, setOffside] = useState([0, 0]);
   const [dataMatch, setDataMatch] = useState([]);
   const [data, setData] = useState();
   const [player, setPlayer] = useState([]);
   const [playerAway, setPlayerAway] = useState([]);
   const [goalHome, setGoalHome] = useState();
   const [goalAway, setGoalAway] = useState();
-  const [dataTeamHome, setDataTeamHome] = useState([]);
-  const [dataTeamAway, setDataTeamAway] = useState([]);
 
   const { onDownload } = useDownloadExcel({
     currentTableRef: tableRef.current,
@@ -43,11 +38,70 @@ export default function Detail() {
     sheet: `Play- ${formattedDate}`,
   });
 
+  const scoreTeamAway = async (idMatch, idTeam) => {
+    await axios
+      .get("goal/" + idMatch + "/" + idTeam)
+      .then((res) => {
+        setGoalAway(res.data.data);
+      })
+      .catch();
+  };
+  const scoreTeamHome = async (idMatch, idTeam) => {
+    await axios
+      .get("goal/" + idMatch + "/" + idTeam)
+      .then((res) => {
+        setGoalHome(res.data.data);
+      })
+      .catch();
+  };
+
+  const onChangeHandle = async (payload) => {
+    const data = payload.split(" ");
+    console.log(data);
+
+    await axios
+      .get("match/" + data[0])
+      .then((res) => {
+        console.log(res.data);
+        setData(res.data.data);
+
+        setPlayer(res.data.data.home_team.player);
+        setPlayerAway(res.data.data.away_team.player);
+
+        scoreTeamHome(data[0], data[1]);
+        scoreTeamAway(data[0], data[2]);
+
+        axios.get("os/" + data[0] + "/" + data[1]).then((res) =>
+          setOffside((prev) => {
+            prev[0] = res.data.data;
+            return prev;
+          })
+        );
+
+        axios.get("os/" + data[0] + "/" + data[2]).then((res) =>
+          setOffside((prev) => {
+            prev[1] = res.data.data;
+            return prev;
+          })
+        );
+      })
+      .catch((err) => {});
+  };
+  const getMatch = async () => {
+    await axios.get("match").then((res) => {
+      setDataMatch(res.data.data);
+    });
+  };
+
+  useEffect(() => {
+    getMatch();
+  }, []);
+
   const styles = StyleSheet.create({
     page: {
       flexDirection: "row",
       backgroundColor: "#ffffff",
-      justifyContent: "space-between", // Add this line to align the date and images
+      justifyContent: "center",
     },
     section: {
       margin: 10,
@@ -73,7 +127,7 @@ export default function Detail() {
       flexDirection: "row",
     },
     tableCell: {
-      paddingHorizontal: 25,
+      paddingHorizontal: 0,
       paddingVertical: 5,
       color: "#000000",
       textAlign: "center",
@@ -104,7 +158,7 @@ export default function Detail() {
       marginBottom: 10,
     },
     scoreText: {
-      fontSize: 16,
+      fontSize: 20,
       fontWeight: "bold",
       marginHorizontal: 10,
     },
@@ -118,9 +172,9 @@ export default function Detail() {
     },
   });
 
-  const MyDoc = ({ player, playerAway, dataTeamHome, dataTeamAway }) => (
+  const MyDoc = ({ player, playerAway, dataMatch }) => (
     <Document>
-      <Page size="F4">
+      <Page size="A4">
         <View style={styles.section}>
           {/* Date */}
           <View style={styles.dateContainer}>
@@ -128,30 +182,51 @@ export default function Detail() {
           </View>
 
           <View style={styles.page}>
-            {/* Image 1 */}
-            <View style={styles.imageContainer}>
-              {dataTeamHome.map((data, index) => (
-                <Image style={styles.image} src={data.logo} />
-              ))}
+            {dataMatch.map((data, index) => (
+              <>
+                <View style={styles.imageContainer} key={index}>
+                  <Image
+                    style={styles.image}
+                    src={data ? `${back}team/${data.home_team.logo}` : ""}
+                  />
+                </View>
+                <View>{data.home_team.name}</View>
+              </>
+            ))}
+            <View>{offside[0]}</View>
+            <View>
+              {data
+                ? data.ballPossession[0]
+                  ? Math.round(data.ballPossession[1].possession_time) + "%"
+                  : "0"
+                : "0"}
             </View>
 
-            {/* Score */}
             <View style={styles.scoreContainer}>
-              {player.map((data, index) => (
-                <Text style={styles.scoreText}>{data.goal}</Text>
-              ))}
+              <Text style={styles.scoreText}>{goalHome}</Text>
               <Text style={styles.scoreText}>-</Text>
-              {playerAway.map((data, index) => (
-                <Text style={styles.scoreText}>{data.goal}</Text>
-              ))}
+              <Text style={styles.scoreText}>{goalAway}</Text>
             </View>
 
-            {/* Image 2 */}
-            <View style={styles.imageContainer}>
-              {dataTeamAway.map((data, index) => (
-                <Image style={styles.image} src={data.logo} />
-              ))}
-            </View>
+            {dataMatch.map((data, index) => (
+              <>
+                <View style={styles.imageContainer} key={index}>
+                  <Image
+                    style={styles.image}
+                    src={data ? `${back}team/${data.away_team.logo}` : ""}
+                  />
+                </View>
+                <View>{data.away_team.name}</View>
+              </>
+            ))}
+          </View>
+          <View>{offside[1]}</View>
+          <View>
+            {data
+              ? data.ballPossession[1]
+                ? Math.round(data.ballPossession[1].possession_time) + "%"
+                : "0"
+              : "0"}
           </View>
 
           {/* Table */}
@@ -174,13 +249,18 @@ export default function Detail() {
                 <Text style={styles.tableHeaderText}>Team</Text>
               </View>
               <View style={styles.tableCell}>
-                <Text style={styles.tableHeaderText}>Kartu Merah</Text>
+                <Text style={styles.tableHeaderText}>Goal</Text>
               </View>
               <View style={styles.tableCell}>
-                <Text style={styles.tableHeaderText}>Kartu Kuning</Text>
+                <Text style={styles.tableHeaderText}>K.Merah</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>K.Kuning</Text>
+              </View>
+              <View style={styles.tableCell}>
+                <Text style={styles.tableHeaderText}>Pergantian</Text>
               </View>
             </View>
-
             {/* Table Body */}
             {player.map((data, index) => (
               <View style={styles.tableRow} key={index}>
@@ -200,31 +280,54 @@ export default function Detail() {
                   <Text>{data.team.name}</Text>
                 </View>
                 <View style={styles.tableCell}>
+                  {data.goals[0]
+                    ? data.goals.map((data) => (
+                        <Text className="pl-2 font-bold inline">
+                          {data.goal_time}"
+                          <IoFootball className="text-xl" />
+                        </Text>
+                      ))
+                    : ""}
+                </View>
+                <View style={styles.tableCell}>
                   <Text>
-
                     {
                       data.cards.filter((card) => card.card_type === "red")
                         .length
                     }
-
-                    {data.cards.filter((card) => card.card_type === "red").length}
-
                   </Text>
                 </View>
                 <View style={styles.tableCell}>
                   <Text>
-
                     {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
-
-                    {data.cards.filter((card) => card.card_type === "yellow").length}
-
                   </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  {data.status}
+                  {data.switchPlayerIn[0]
+                    ? data.switchPlayerIn.map((data) => (
+                        <Text className="pl-2 font-bold inline">
+                          {data.switch_time}" In
+                          <BsBoxArrowInUp className="text-xl text-green-500" />
+                        </Text>
+                      ))
+                    : ""}
+
+                  {data.switchPlayerOut[0]
+                    ? data.switchPlayerOut.map((data) => (
+                        <Text className="pl-2 font-bold inline">
+                          {data.switch_time}" Out
+                          <BsBoxArrowDown className="text-xl text-red-500" />
+                        </Text>
+                      ))
+                    : ""}
                 </View>
               </View>
             ))}
+
             {playerAway.map((data, index) => (
               <View style={styles.tableRow} key={index}>
                 <View style={styles.tableCell}>
@@ -243,93 +346,58 @@ export default function Detail() {
                   <Text>{data.team.name}</Text>
                 </View>
                 <View style={styles.tableCell}>
+                  {data.goals[0]
+                    ? data.goals.map((data) => (
+                        <Text className="pl-2 font-bold inline">
+                          {data.goal_time}"
+                          <IoFootball className="text-xl" />
+                        </Text>
+                      ))
+                    : ""}
+                </View>
+                <View style={styles.tableCell}>
                   <Text>
-
                     {
                       data.cards.filter((card) => card.card_type === "red")
                         .length
                     }
-
-                    {data.cards.filter((card) => card.card_type === "red").length}
                   </Text>
                 </View>
                 <View style={styles.tableCell}>
                   <Text>
-
                     {
                       data.cards.filter((card) => card.card_type === "yellow")
                         .length
                     }
-                    {data.cards.filter((card) => card.card_type === "yellow").length}
                   </Text>
+                </View>
+                <View style={styles.tableCell}>
+                  {data.status}
+                  {data.switchPlayerIn[0]
+                    ? data.switchPlayerIn.map((data) => (
+                        <Text className="pl-2 font-bold inline">
+                          {data.switch_time}" In
+                          <BsBoxArrowInUp className="text-xl text-green-500" />
+                        </Text>
+                      ))
+                    : ""}
+
+                  {data.switchPlayerOut[0]
+                    ? data.switchPlayerOut.map((data) => (
+                        <Text className="pl-2 font-bold inline">
+                          {data.switch_time}" Out
+                          <BsBoxArrowDown className="text-xl text-red-500" />
+                        </Text>
+                      ))
+                    : ""}
                 </View>
               </View>
             ))}
           </View>
-
         </View>
       </Page>
     </Document>
   );
-
-  const scoreTeamAway = async (idMatch, idTeam) => {
-
-    await axios.get("goal/" + idMatch + "/" + idTeam)
-      .then(res => {
-        setGoalAway(res.data.data)
-      })
-      .catch()
-  }
-  const scoreTeamHome = async (idMatch, idTeam) => {
-
-    await axios.get("goal/" + idMatch + "/" + idTeam)
-      .then(res => {
-        setGoalHome(res.data.data)
-      })
-      .catch()
-  }
-
-
-  const onChangeHandle = async (payload) => {
-    const data = payload.split(" ");
-    console.log(data);
-
-    await axios
-      .get("match/" + data[0])
-      .then((res) => {
-        console.log(res.data);
-        setData(res.data.data)
-
-        setPlayer(res.data.data.home_team.player)
-        setPlayerAway(res.data.data.away_team.player)
-
-        scoreTeamHome(data[0], data[1])
-        scoreTeamAway(data[0], data[2])
-
-        axios.get("os/" + data[0] + "/" + data[1])
-          .then(res => setOffside(prev => {
-            prev[0] = res.data.data
-            return prev
-          }))
-
-        axios.get("os/" + data[0] + "/" + data[2])
-          .then(res => setOffside(prev => {
-            prev[1] = res.data.data
-            return prev
-          }))
-      })
-      .catch((err) => { });
-  };
-  const getMatch = async () => {
-    await axios.get("match").then((res) => {
-      setDataMatch(res.data.data);
-    });
-  };
-
-
-  useEffect(() => {
-    getMatch();
-  }, []);
 
   return (
     <div>
@@ -341,8 +409,7 @@ export default function Detail() {
             <MyDoc
               player={player}
               playerAway={playerAway}
-              dataTeamHome={dataTeamHome}
-              dataTeamAway={dataTeamAway}
+              dataMatch={dataMatch}
             />
           }
           fileName={`Play-${formattedDate}.pdf`}
@@ -386,14 +453,20 @@ export default function Detail() {
           </div>
         </form>
         <div className="flex justify-around items-center px-10">
-          <img src={data ? `${back}team/${data.home_team.logo}`: ""} alt="logo team kiri" className="w-36 h-36"/>
+          <img
+            src={data ? `${back}team/${data.home_team.logo}` : ""}
+            alt="logo team kiri"
+            className="w-36 h-36"
+          />
           <div className="w-full max-w-md mx-auto bg-white shadow-md rounded-lg overflow-hidden mt-6">
             <div className="flex justify-between bg-gray-200 text-gray-700 py-2 px-2">
               <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
                 <span>{data ? data.home_team.name : "team kiri"}</span>
               </div>
               <div className="w-1/3 text-center text-5xl font-extrabold">
-                <span>{goalHome} - {goalAway}</span>
+                <span>
+                  {goalHome} - {goalAway}
+                </span>
               </div>
               <div className="capitalize w-1/3 text-center text-2xl font-bold flex justify-center items-center">
                 <span>{data ? data.away_team.name : "team kanan"}</span>
@@ -412,17 +485,33 @@ export default function Detail() {
             </div>
             <div className="flex justify-between py-3 px-2">
               <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-                <span>{data ? (data.ballPossession[0] ? Math.round(data.ballPossession[0].possession_time) + "%" : "0") : "0"}</span>
+                <span>
+                  {data
+                    ? data.ballPossession[0]
+                      ? Math.round(data.ballPossession[0].possession_time) + "%"
+                      : "0"
+                    : "0"}
+                </span>
               </div>
               <div className="w-1/3 text-center text-xl font-semibold">
                 <span>Ball Possession</span>
               </div>
               <div className="w-1/3 text-center text-lg font-medium flex justify-center items-center">
-                <span>{data ? (data.ballPossession[1] ? Math.round(data.ballPossession[1].possession_time) + "%" : "0") : "0"}</span>
+                <span>
+                  {data
+                    ? data.ballPossession[1]
+                      ? Math.round(data.ballPossession[1].possession_time) + "%"
+                      : "0"
+                    : "0"}
+                </span>
               </div>
             </div>
           </div>
-          <img src={data ? `${back}team/${data.away_team.logo}` : ""} alt="logo kanan" className="w-36 h-36" />
+          <img
+            src={data ? `${back}team/${data.away_team.logo}` : ""}
+            alt="logo kanan"
+            className="w-36 h-36"
+          />
         </div>
         <div className="flex justify-center my-10">
           <table
@@ -446,15 +535,14 @@ export default function Detail() {
                   <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
                     {data.numberJersey}
-                    {data.goals[0] ?
-                      (data.goals).map(data => (
-                        <span className="pl-2 font-bold inline">
-                          {data.goal_time}"
-                          <IoFootball className="text-xl" />
-                        </span>
-                      ))
+                    {data.goals[0]
+                      ? data.goals.map((data) => (
+                          <span className="pl-2 font-bold inline">
+                            {data.goal_time}"
+                            <IoFootball className="text-xl" />
+                          </span>
+                        ))
                       : ""}
-
                   </td>
                   <td className="p-2 border border-slate-300">
                     {data.position}
@@ -477,25 +565,23 @@ export default function Detail() {
                   <td className="p-2 border border-slate-300">
                     {data.status}
 
-                    {data.switchPlayerIn[0] ?
-                      (data.switchPlayerIn).map(data => (
-                        <span className="pl-2 font-bold inline">
-                          {data.switch_time}"
-                          <BsBoxArrowInUp className="text-xl text-green-500" />
-                        </span>
-                      ))
+                    {data.switchPlayerIn[0]
+                      ? data.switchPlayerIn.map((data) => (
+                          <span className="pl-2 font-bold inline">
+                            {data.switch_time}"
+                            <BsBoxArrowInUp className="text-xl text-green-500" />
+                          </span>
+                        ))
                       : ""}
 
-                    {data.switchPlayerOut[0] ?
-                      (data.switchPlayerOut).map(data => (
-                        <span className="pl-2 font-bold inline">
-                          {data.switch_time}"
-                          <BsBoxArrowDown className="text-xl text-red-500" />
-
-                        </span>
-                      ))
+                    {data.switchPlayerOut[0]
+                      ? data.switchPlayerOut.map((data) => (
+                          <span className="pl-2 font-bold inline">
+                            {data.switch_time}"
+                            <BsBoxArrowDown className="text-xl text-red-500" />
+                          </span>
+                        ))
                       : ""}
-
                   </td>
                 </tr>
               ))}
@@ -505,13 +591,13 @@ export default function Detail() {
                   <td className="p-2 border border-slate-300">{data.name}</td>
                   <td className="p-2 border border-slate-300">
                     {data.numberJersey}
-                    {data.goals[0] ?
-                      (data.goals).map(data => (
-                        <span className="pl-2 font-bold inline">
-                          {data.goal_time}"
-                          <IoFootball className="text-xl" />
-                        </span>
-                      ))
+                    {data.goals[0]
+                      ? data.goals.map((data) => (
+                          <span className="pl-2 font-bold inline">
+                            {data.goal_time}"
+                            <IoFootball className="text-xl" />
+                          </span>
+                        ))
                       : ""}
                   </td>
                   <td className="p-2 border border-slate-300">
@@ -534,23 +620,22 @@ export default function Detail() {
                   </td>
                   <td className="p-2 border border-slate-300">
                     {data.status}
-                    {data.switchPlayerIn[0] ?
-                      (data.switchPlayerIn).map(data => (
-                        <span className="pl-2 font-bold inline">
-                          {data.switch_time}"
-                          <BsBoxArrowInUp className="text-xl text-green-500" />
-                        </span>
-                      ))
+                    {data.switchPlayerIn[0]
+                      ? data.switchPlayerIn.map((data) => (
+                          <span className="pl-2 font-bold inline">
+                            {data.switch_time}"
+                            <BsBoxArrowInUp className="text-xl text-green-500" />
+                          </span>
+                        ))
                       : ""}
 
-                    {data.switchPlayerOut[0] ?
-                      (data.switchPlayerOut).map(data => (
-                        <span className="pl-2 font-bold inline">
-                          {data.switch_time}"
-                          <BsBoxArrowDown className="text-xl text-red-500" />
-
-                        </span>
-                      ))
+                    {data.switchPlayerOut[0]
+                      ? data.switchPlayerOut.map((data) => (
+                          <span className="pl-2 font-bold inline">
+                            {data.switch_time}"
+                            <BsBoxArrowDown className="text-xl text-red-500" />
+                          </span>
+                        ))
                       : ""}
                   </td>
                 </tr>
